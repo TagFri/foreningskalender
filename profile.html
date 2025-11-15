@@ -219,7 +219,6 @@
         <!-- Venstre kolonne -->
         <section class="card card-user">
             <h2>Bruker</h2>
-            <p>Innlogget bruker og brukertype.</p>
             <div class="user-info-row">
                 <div id="userName"></div>
                 <div id="userEmail" style="font-size:0.85rem; color:var(--muted);"></div>
@@ -338,8 +337,8 @@
     }
 
     function renderUserInfo() {
-        userNameEl.textContent = currentUserProfile.displayName || "(Uten navn)";
-        userEmailEl.textContent = currentUserProfile.email || "";
+        userNameEl.textContent = "Navn: "+currentUserProfile.displayName || "(Uten navn)";
+        userEmailEl.textContent = "Mail: "+currentUserProfile.email || "";
 
         // 1) Start alltid med "Student"
         const lines = ["Student"];
