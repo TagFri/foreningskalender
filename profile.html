@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8" />
+    <title>Min side – Foreningskalender</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --accent: #2563eb;
+            --accent-soft: #dbeafe;
+            --text: #111827;
+            --muted: #6b7280;
+            --radius: 12px;
+            --shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            --danger: #dc2626;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .page {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0 16px;
+        }
+
+        h1 {
+            margin: 0 0 2px;
+            font-size: 1.3rem;
+        }
+
+        .sub {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 16px;
+        }
+
+        .card h2 {
+            margin: 0 0 8px;
+            font-size: 1.05rem;
+        }
+
+        .card p {
+            margin: 0 0 12px;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .user-info-row {
+            font-size: 0.9rem;
+        }
+
+        .favorites-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 4px;
+        }
+
+        .favorite-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .favorite-item code {
+            font-size: 0.78rem;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .actions {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .status {
+            margin-top: 6px;
+            font-size: 0.8rem;
+        }
+
+        .status--error { color: var(--danger); }
+        .status--success { color: #15803d; }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .field label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .hint {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .field input {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft);
+            background: #ffffff;
+        }
+
+        .btn-tiny {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: none;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .page { padding: 20px; }
+            main {
+                display: grid;
+                grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+                gap: 20px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <div>
+            <h1>Min side</h1>
+            <p class="sub">Velg favorittforeninger og kalender-abonnement.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-small btn-secondary" id="backToCalendarBtn">Til kalender</button>
+            <button class="btn-small btn-secondary" id="gotoOrgPageBtn">Foreningsside</button>
+            <button class="btn-small" id="logoutBtn">Logg ut</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Venstre kolonne -->
+        <section class="card card-user">
+            <h2>Bruker</h2>
+            <p>Innlogget bruker og brukertype.</p>
+            <div class="user-info-row">
+                <div id="userName"></div>
+                <div id="userEmail" style="font-size:0.85rem; color:var(--muted);"></div>
+                <div id="userRole" style="font-size:0.8rem; margin-top:4px;"></div>
+            </div>
+            <div class="actions" id="adminActions" style="margin-top: 10px; display:none;">
+                <button class="btn-tiny" id="gotoAdminBtn">Gå til foreningsinnstillinger</button>
+            </div>
+        </section>
+
+        <!-- Høyre kolonne: kort etter hverandre -->
+        <div class="right-column">
+            <section class="card card-subscription">
+                <h2>Kalenderabonnement</h2>
+                <p>Abonner på dine favorittforeninger i kalender-appen din.</p>
+                <div class="field">
+                    <label for="subscriptionUrl">URL for abonnement</label>
+                    <input id="subscriptionUrl" type="text" readonly />
+                    <p class="hint">Kopier denne inn i kalender på mobil/Mac for auto-sync.</p>
+                </div>
+                <div class="actions">
+                    <button type="button" class="btn-small btn-secondary" id="copySubscriptionBtn">
+                        Kopier URL
+                    </button>
+                </div>
+            </section>
+
+            <section class="card card-favorites">
+                <h2>Favorittforeninger</h2>
+                <p>Huk av foreninger du vil ha som favoritter. Listen oppdateres automatisk.</p>
+                <div id="favoritesList" class="favorites-list"></div>
+                <div id="favoritesStatus" class="status"></div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script type="module">
+    import { db, auth } from "./firebase-init.js";
+    import {
+        onAuthStateChanged,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+        collection,
+        getDocs,
+        doc,
+        getDoc,
+        updateDoc,
+        serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const userNameEl = document.getElementById("userName");
+    const userEmailEl = document.getElementById("userEmail");
+    const userRoleEl = document.getElementById("userRole");
+    const adminActionsEl = document.getElementById("adminActions");
+    const gotoAdminBtn = document.getElementById("gotoAdminBtn");
+
+    const favoritesListEl = document.getElementById("favoritesList");
+    const favoritesStatus = document.getElementById("favoritesStatus");
+
+    const subscriptionUrlInput = document.getElementById("subscriptionUrl");
+    const copySubscriptionBtn = document.getElementById("copySubscriptionBtn");
+
+    const backToCalendarBtn = document.getElementById("backToCalendarBtn");
+    const gotoOrgPageBtn = document.getElementById("gotoOrgPageBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    let currentUser = null;
+    let currentUserProfile = null;
+    let organizations = [];
+    let favoriteOrgIds = new Set();
+    let userDocRef = null;
+
+    function setStatus(el, msg, type) {
+        el.textContent = msg || "";
+        el.classList.remove("status--error", "status--success");
+        if (!msg) return;
+        if (type === "error") el.classList.add("status--error");
+        if (type === "success") el.classList.add("status--success");
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        currentUser = user;
+        userDocRef = doc(db, "users", user.uid);
+
+        const snap = await getDoc(userDocRef);
+        if (!snap.exists()) {
+            currentUserProfile = {
+                displayName: user.displayName || "",
+                email: user.email,
+                role: "student",
+                adminOf: [],
+                favoriteOrganizations: []
+            };
+        } else {
+            currentUserProfile = snap.data();
+        }
+
+        favoriteOrgIds = new Set(currentUserProfile.favoriteOrganizations || []);
+
+        await loadOrganizations();
+        renderUserInfo();
+        renderFavoritesList();
+        setupSubscriptionUrl();
+    });
+
+    async function loadOrganizations() {
+        const snap = await getDocs(collection(db, "organizations"));
+        organizations = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    }
+
+    function renderUserInfo() {
+        userNameEl.textContent = currentUserProfile.displayName || "(Uten navn)";
+        userEmailEl.textContent = currentUserProfile.email || "";
+
+        const role = currentUserProfile.role || "student";
+        let roleText = "Student";
+
+        if (role === "superAdmin") {
+            roleText = "Superadministrator";
+        } else if (role === "orgAdmin") {
+            const raw = currentUserProfile.adminOf;
+            let adminOrgIds = [];
+
+            if (Array.isArray(raw)) {
+                adminOrgIds = raw.map(String);
+            } else if (typeof raw === "string") {
+                adminOrgIds = [raw];
+            } else if (raw && typeof raw === "object") {
+                adminOrgIds = Object.keys(raw);
+            }
+
+            const orgMap = new Map(organizations.map((o) => [o.id, o]));
+            const labels = adminOrgIds.map((id) => {
+                const o = orgMap.get(id);
+                if (!o) return id;
+                return o.shortCode ? `${o.shortCode} – ${o.name}` : o.name || id;
+            });
+
+            if (labels.length) {
+                roleText = `Foreningsadministrator for ${labels.join(", ")}`;
+            } else {
+                roleText = "Foreningsadministrator";
+            }
+        } else {
+            roleText = "Student";
+        }
+
+        userRoleEl.textContent = `Brukertype: ${roleText}`;
+
+        if (role === "orgAdmin" || role === "superAdmin") {
+            adminActionsEl.style.display = "flex";
+        } else {
+            adminActionsEl.style.display = "none";
+        }
+    }
+
+    function renderFavoritesList() {
+        favoritesListEl.innerHTML = "";
+
+        const sorted = [...organizations].sort((a, b) => {
+            const aFav = favoriteOrgIds.has(a.id);
+            const bFav = favoriteOrgIds.has(b.id);
+
+            if (aFav && !bFav) return -1;
+            if (!aFav && bFav) return 1;
+
+            return (a.name || "").localeCompare(b.name || "", "no");
+        });
+
+        sorted.forEach((org) => {
+            const row = document.createElement("label");
+            row.className = "favorite-item";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = org.id;
+            checkbox.checked = favoriteOrgIds.has(org.id);
+
+            const code = document.createElement("code");
+            code.textContent = org.shortCode || org.id;
+
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = org.name || org.id;
+
+            row.appendChild(checkbox);
+            row.appendChild(code);
+            row.appendChild(nameSpan);
+
+            favoritesListEl.appendChild(row);
+
+            checkbox.addEventListener("change", async () => {
+                if (checkbox.checked) {
+                    favoriteOrgIds.add(org.id);
+                } else {
+                    favoriteOrgIds.delete(org.id);
+                }
+
+                renderFavoritesList();
+                await saveFavoritesToFirestore();
+            });
+        });
+    }
+
+    async function saveFavoritesToFirestore() {
+        if (!userDocRef) return;
+        try {
+            setStatus(favoritesStatus, "Lagrer favoritter ...", "success");
+            await updateDoc(userDocRef, {
+                favoriteOrganizations: Array.from(favoriteOrgIds),
+                updatedAt: serverTimestamp()
+            });
+            setStatus(favoritesStatus, "Favoritter oppdatert ✅", "success");
+        } catch (err) {
+            console.error(err);
+            setStatus(favoritesStatus, "Kunne ikke lagre favoritter.", "error");
+        }
+    }
+
+    function setupSubscriptionUrl() {
+        if (!currentUser) return;
+        const base = window.location.origin;
+        const url = `${base}/api/calendar/${currentUser.uid}/favorites.ics`;
+        subscriptionUrlInput.value = url;
+    }
+
+    copySubscriptionBtn.addEventListener("click", async () => {
+        try {
+            if (!subscriptionUrlInput.value) return;
+            await navigator.clipboard.writeText(subscriptionUrlInput.value);
+            setStatus(favoritesStatus, "URL kopiert til utklippstavlen ✅", "success");
+        } catch (err) {
+            console.error(err);
+            setStatus(favoritesStatus, "Kunne ikke kopiere URL.", "error");
+        }
+    });
+
+    backToCalendarBtn.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    gotoOrgPageBtn.addEventListener("click", () => {
+        window.location.href = "organization-settings.html";
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+        try {
+            await signOut(auth);
+            window.location.href = "index.html";
+        } catch (err) {
+            console.error(err);
+            alert("Kunne ikke logge ut.");
+        }
+    });
+
+    gotoAdminBtn.addEventListener("click", () => {
+        window.location.href = "organization-settings.html";
+    });
+</script>
+</body>
+</html>

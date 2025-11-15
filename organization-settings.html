@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8" />
+    <title>Foreningsinnstillinger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --accent: #2563eb;
+            --accent-soft: #dbeafe;
+            --text: #111827;
+            --muted: #6b7280;
+            --radius: 12px;
+            --shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            --danger: #dc2626;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .page {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 0 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .header-left h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            white-space: nowrap;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .org-switcher select {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.85rem;
+            background: #f9fafb;
+        }
+
+        .org-switcher select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft);
+            background: #ffffff;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .top-row {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 16px;
+        }
+
+        .card h2 {
+            margin: 0 0 8px;
+            font-size: 1.05rem;
+        }
+
+        .card p {
+            margin: 0 0 12px;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .field-row .field {
+            flex: 1 1 120px;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            padding: 9px 11px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft);
+            background: #ffffff;
+        }
+
+        textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+
+        .hint {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .status {
+            margin-top: 6px;
+            font-size: 0.8rem;
+        }
+
+        .status--error { color: var(--danger); }
+        .status--success { color: #15803d; }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        #contactMeta {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #2563eb;
+        }
+
+        .event-type-toggle {
+            display: inline-flex;
+            border-radius: 999px;
+            background: #f3f4f6;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .event-type-toggle button {
+            border: none;
+            background: transparent;
+            font-size: 0.78rem;
+            padding: 6px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .event-type-toggle button.active {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(15,23,42,0.12);
+            font-weight: 600;
+        }
+
+        .dates-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .date-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .date-row input[type="date"],
+        .date-row input[type="time"] {
+            flex: 1 1 90px;
+            min-width: 0;
+        }
+
+        .date-row .btn-small {
+            padding: 6px 8px;
+            font-size: 0.75rem;
+        }
+
+        .btn-tiny {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: none;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 4px;
+            margin-top: 8px;
+        }
+
+        .event-list-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.8rem;
+        }
+
+        .event-list-item.clickable {
+            cursor: pointer;
+        }
+
+        .event-list-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .event-list-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .event-list-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .event-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .link-button {
+            border: none;
+            background: transparent;
+            padding: 0;
+            font-size: 0.75rem;
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        @media (min-width: 768px) {
+            .page { padding: 20px; }
+            .top-row {
+                flex-direction: row;
+            }
+            .top-row > section {
+                flex: 1 1 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <div class="header-left">
+            <div class="org-switcher">
+                <select id="orgSelector"></select>
+            </div>
+            <h1>Foreningsinnstillinger</h1>
+        </div>
+        <div class="header-actions">
+            <button class="btn-small btn-secondary" id="backToCalendarBtn">Til kalender</button>
+            <button class="btn-small btn-secondary" id="gotoProfileBtn">Min profil</button>
+            <button class="btn-small" id="logoutBtnOrg">Logg ut</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- ØVERST: Forening + kontakt -->
+        <div class="top-row">
+            <section class="card">
+                <h2>Foreningsinfo</h2>
+                <p>Kontonummer og forenings-epost brukes ved utbetaling og kontakt relatert til events.</p>
+
+                <form id="orgForm">
+                    <div class="field">
+                        <label for="orgName">Navn på forening</label>
+                        <input id="orgName" type="text" placeholder="Medisinernes Seksual Opplysning" disabled />
+                    </div>
+
+                    <div class="field">
+                        <label for="orgBankAccount">Kontonummer for utbetaling</label>
+                        <input id="orgBankAccount" type="text" placeholder="1234.56.78901" />
+                    </div>
+
+                    <div class="field">
+                        <label for="orgEmail">E-post til foreningen</label>
+                        <input id="orgEmail" type="email" placeholder="kontakt@forening.no" />
+                        <p class="hint">Adresse som kan stå på nettsiden og brukes til kontakt.</p>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn-small">Lagre foreningsinfo</button>
+                    </div>
+                    <div id="orgStatus" class="status"></div>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>Ansvarlig kontaktperson</h2>
+                <p>Brukes ved behov for kontakt fra nettside administrator ifm. events, utbetatling o.l.</p>
+
+                <form id="contactForm">
+                    <div class="field">
+                        <label for="contactName">Navn</label>
+                        <input id="contactName" type="text" placeholder="Ola Nordmann" />
+                    </div>
+
+                    <div class="field">
+                        <label for="contactPhone">Mobilnummer</label>
+                        <input id="contactPhone" type="tel" placeholder="+47 900 00 000" />
+                    </div>
+
+                    <div class="field">
+                        <label for="contactEmail">Personlig e-post</label>
+                        <input id="contactEmail" type="email" placeholder="ola.nordmann@example.com" />
+                    </div>
+
+                    <div id="contactMeta"></div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn-small">Lagre kontaktperson</button>
+                    </div>
+
+                    <div id="contactStatus" class="status"></div>
+                </form>
+            </section>
+        </div>
+
+        <!-- UNDER: Events (full bredde) -->
+        <section class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px;">
+                <h2>Events</h2>
+                <span id="orgBadge" class="badge" style="display:none;">
+            <span class="badge-dot" id="orgBadgeDot"></span>
+            <span id="orgBadgeText"></span>
+          </span>
+            </div>
+            <p>Opprett nye events for denne foreningen. Velg mellom enkeltstående event eller gjentagende med flere datoer.</p>
+
+            <!-- Event-skjema -->
+            <form id="eventForm">
+                <div class="field">
+                    <label>Event-type</label>
+                    <div class="event-type-toggle">
+                        <button type="button" id="typeSingleBtn" class="active">Enkeltstående</button>
+                        <button type="button" id="typeRecurringBtn">Gjentagende</button>
+                    </div>
+                    <p class="hint">Gjentagende event lar deg velge flere datoer med samme info (f.eks. treninger).</p>
+                </div>
+
+                <div class="field">
+                    <label for="eventTitle">Tittel</label>
+                    <input id="eventTitle" type="text" placeholder="F.eks. MSO-kurs i prevensjon" />
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="eventLocation">Sted</label>
+                        <input id="eventLocation" type="text" placeholder="F.eks. Auditoriet, Domus Medica" />
+                    </div>
+                </div>
+
+                <!-- Begrens plasser -->
+                <div class="field-row">
+                    <div class="field">
+                        <label>
+                            <input type="checkbox" id="limitSeatsCheckbox" />
+                            Begrens antall plasser
+                        </label>
+                        <p class="hint">Hvis av, er det ubegrenset antall plasser.</p>
+                    </div>
+                    <div class="field">
+                        <label for="maxParticipants">Maks antall deltakere</label>
+                        <input id="maxParticipants" type="number" min="1" placeholder="F.eks. 50" disabled />
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="eventDescription">Beskrivelse</label>
+                    <textarea id="eventDescription" placeholder="Kort beskrivelse av eventet..."></textarea>
+                </div>
+
+                <!-- Påmeldingsåpning -->
+                <div class="field">
+                    <label>
+                        <input type="checkbox" id="useRegOpenCheckbox" />
+                        Sett åpningstid for påmelding
+                    </label>
+                    <p class="hint">Hvis av, er påmelding åpen med én gang eventet publiseres.</p>
+                </div>
+
+                <div class="field-row" id="regOpenFields" style="display:none;">
+                    <div class="field">
+                        <label for="regOpenDate">Påmelding åpner (dato)</label>
+                        <input id="regOpenDate" type="date" />
+                    </div>
+                    <div class="field">
+                        <label for="regOpenTime">Påmelding åpner (tid)</label>
+                        <input id="regOpenTime" type="time" />
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="priceMember">Pris medlem (kr)</label>
+                        <input id="priceMember" type="number" min="0" placeholder="0" />
+                    </div>
+                    <div class="field">
+                        <label for="priceNonMember">Pris ikke-medlem (kr)</label>
+                        <input id="priceNonMember" type="number" min="0" placeholder="0" />
+                    </div>
+                </div>
+
+                <!-- Enkeltstående dato/tid -->
+                <div id="singleDateFields">
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="singleDate">Dato</label>
+                            <input id="singleDate" type="date" />
+                        </div>
+                        <div class="field">
+                            <label for="singleStartTime">Starttid</label>
+                            <input id="singleStartTime" type="time" />
+                        </div>
+                        <div class="field">
+                            <label for="singleEndTime">Sluttid</label>
+                            <input id="singleEndTime" type="time" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gjentagende datoer -->
+                <div id="recurringDateFields" style="display:none;">
+                    <label>Datoer for gjentagende event</label>
+                    <div id="recurringDatesContainer" class="dates-list"></div>
+                    <button type="button" class="btn-tiny" id="addRecurringDateBtn">+ Legg til dato</button>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn-small" id="eventSubmitBtn">Opprett event</button>
+                    <button type="button" class="btn-small btn-secondary" id="cancelEditBtn" style="display:none;">Avbryt redigering</button>
+                </div>
+                <div id="eventStatus" class="status"></div>
+            </form>
+
+            <!-- Liste over events -->
+            <h3 style="margin-top:16px; font-size:0.95rem;">Kommende events</h3>
+            <div id="eventList" class="event-list"></div>
+        </section>
+    </main>
+</div>
+
+<script type="module">
+    import { db, auth } from "./firebase-init.js";
+    import {
+        doc,
+        getDoc,
+        updateDoc,
+        serverTimestamp,
+        collection,
+        getDocs,
+        addDoc,
+        deleteDoc,
+        query,
+        where,
+        Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import {
+        onAuthStateChanged,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const backToCalendarBtn = document.getElementById("backToCalendarBtn");
+    const gotoProfileBtn = document.getElementById("gotoProfileBtn");
+    const orgSelector = document.getElementById("orgSelector");
+    const logoutBtnOrg = document.getElementById("logoutBtnOrg");
+
+    const orgForm = document.getElementById("orgForm");
+    const orgStatus = document.getElementById("orgStatus");
+    const orgNameInput = document.getElementById("orgName");
+    const orgBankAccountInput = document.getElementById("orgBankAccount");
+    const orgEmailInput = document.getElementById("orgEmail");
+
+    const contactForm = document.getElementById("contactForm");
+    const contactNameInput = document.getElementById("contactName");
+    const contactPhoneInput = document.getElementById("contactPhone");
+    const contactEmailInput = document.getElementById("contactEmail");
+    const contactMeta = document.getElementById("contactMeta");
+    const contactStatus = document.getElementById("contactStatus");
+
+    const orgBadge = document.getElementById("orgBadge");
+    const orgBadgeDot = document.getElementById("orgBadgeDot");
+    const orgBadgeText = document.getElementById("orgBadgeText");
+
+    const eventForm = document.getElementById("eventForm");
+    const eventStatus = document.getElementById("eventStatus");
+    const eventListEl = document.getElementById("eventList");
+    const eventSubmitBtn = document.getElementById("eventSubmitBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+    const typeSingleBtn = document.getElementById("typeSingleBtn");
+    const typeRecurringBtn = document.getElementById("typeRecurringBtn");
+    const singleDateFields = document.getElementById("singleDateFields");
+    const recurringDateFields = document.getElementById("recurringDateFields");
+    const recurringDatesContainer = document.getElementById("recurringDatesContainer");
+    const addRecurringDateBtn = document.getElementById("addRecurringDateBtn");
+
+    const eventTitleInput = document.getElementById("eventTitle");
+    const eventLocationInput = document.getElementById("eventLocation");
+    const limitSeatsCheckbox = document.getElementById("limitSeatsCheckbox");
+    const maxParticipantsInput = document.getElementById("maxParticipants");
+    const eventDescriptionInput = document.getElementById("eventDescription");
+    const useRegOpenCheckbox = document.getElementById("useRegOpenCheckbox");
+    const regOpenFields = document.getElementById("regOpenFields");
+    const regOpenDateInput = document.getElementById("regOpenDate");
+    const regOpenTimeInput = document.getElementById("regOpenTime");
+    const priceMemberInput = document.getElementById("priceMember");
+    const priceNonMemberInput = document.getElementById("priceNonMember");
+
+    const singleDateInput = document.getElementById("singleDate");
+    const singleStartTimeInput = document.getElementById("singleStartTime");
+    const singleEndTimeInput = document.getElementById("singleEndTime");
+
+    let orgIdFromUrl = new URLSearchParams(window.location.search).get("orgId");
+    let currentUser = null;
+    let currentUserProfile = null;
+    let effectiveOrgId = null;
+
+    let allOrganizations = [];
+    let allowedOrgIds = [];
+    let currentOrgEvents = [];
+    let eventType = "single"; // "single" | "recurring"
+
+    // Redigeringsstatus
+    let editingSeriesId = null;
+    let currentSeriesEventIds = null;
+    let editingSingleEventId = null;
+
+    function setStatus(el, msg, type = null) {
+        el.textContent = msg || "";
+        el.classList.remove("status--success", "status--error");
+        if (!msg) return;
+        if (type === "success") el.classList.add("status--success");
+        if (type === "error") el.classList.add("status--error");
+    }
+
+    // ---------- Auth & autorisasjon ----------
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        currentUser = user;
+
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+        if (!userSnap.exists()) {
+            alert("Fant ikke brukerprofil. Ta kontakt med admin.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        currentUserProfile = userSnap.data();
+        console.log("currentUserProfile:", currentUserProfile);
+
+        if (
+            currentUserProfile.role !== "orgAdmin" &&
+            currentUserProfile.role !== "superAdmin"
+        ) {
+            alert("Du har ikke tilgang til foreningsinnstillinger.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        await initOrganizationsList();
+    });
+
+    // ---------- Hent foreninger & sett hvilke brukeren kan styre ----------
+    async function initOrganizationsList() {
+        const snap = await getDocs(collection(db, "organizations"));
+        allOrganizations = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        console.log("allOrganizations:", allOrganizations);
+
+        if (currentUserProfile.role === "superAdmin") {
+            allowedOrgIds = allOrganizations.map((o) => o.id);
+        } else if (currentUserProfile.role === "orgAdmin") {
+            const raw = currentUserProfile.adminOf;
+            if (Array.isArray(raw)) {
+                allowedOrgIds = raw.map(String);
+            } else if (typeof raw === "string") {
+                allowedOrgIds = [raw];
+            } else if (raw && typeof raw === "object") {
+                allowedOrgIds = Object.keys(raw);
+            } else {
+                allowedOrgIds = [];
+            }
+        }
+
+        console.log("allowedOrgIds:", allowedOrgIds);
+
+        if (!allowedOrgIds.length) {
+            setStatus(orgStatus, "Ingen foreninger tilknyttet brukeren.", "error");
+            return;
+        }
+
+        if (
+            orgIdFromUrl &&
+            (currentUserProfile.role === "superAdmin" ||
+                allowedOrgIds.includes(orgIdFromUrl))
+        ) {
+            effectiveOrgId = orgIdFromUrl;
+        } else {
+            effectiveOrgId = allowedOrgIds[0];
+        }
+
+        populateOrgSelector();
+        await loadOrganization(effectiveOrgId);
+        await loadEventsForOrg(effectiveOrgId);
+    }
+
+    function populateOrgSelector() {
+        orgSelector.innerHTML = "";
+        const relevant = allOrganizations.filter((o) =>
+            allowedOrgIds.includes(o.id)
+        );
+
+        relevant.forEach((org) => {
+            const option = document.createElement("option");
+            option.value = org.id;
+            option.textContent = `${org.shortCode || org.id} – ${org.name}`;
+            if (org.id === effectiveOrgId) option.selected = true;
+            orgSelector.appendChild(option);
+        });
+
+        orgSelector.disabled = relevant.length <= 1;
+    }
+
+    orgSelector.addEventListener("change", async () => {
+        effectiveOrgId = orgSelector.value;
+        setStatus(orgStatus, "Laster forening ...");
+        await loadOrganization(effectiveOrgId);
+        await loadEventsForOrg(effectiveOrgId);
+        resetEventFormToCreate();
+        setStatus(orgStatus, "");
+    });
+
+    // ---------- Last forening ----------
+    async function loadOrganization(orgId) {
+        if (!orgId) return;
+
+        const ref = doc(db, "organizations", orgId);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) {
+            setStatus(orgStatus, "Fant ikke forening i databasen.", "error");
+            return;
+        }
+
+        const data = snap.data();
+        console.log("Loaded organization:", orgId, data);
+
+        orgNameInput.value = data.name || "";
+        orgBankAccountInput.value = data.bankAccount || "";
+        orgEmailInput.value = data.orgEmail || "";
+
+        orgBadge.style.display = "inline-flex";
+        orgBadgeDot.style.backgroundColor = data.color || "#2563eb";
+        orgBadgeText.textContent = data.shortCode || data.name || orgId;
+
+        if (data.contactPerson) {
+            contactNameInput.value = data.contactPerson.name || "";
+            contactPhoneInput.value = data.contactPerson.phone || "";
+            contactEmailInput.value = data.contactPerson.email || "";
+            contactMeta.textContent =
+                "Oppdatert: " +
+                (data.contactPerson.updatedAt?.toDate?.().toLocaleDateString?.("no-NO") ??
+                    "–");
+        } else {
+            contactNameInput.value = "";
+            contactPhoneInput.value = "";
+            contactEmailInput.value = "";
+            contactMeta.textContent = "Ingen kontaktperson satt";
+        }
+
+        setStatus(orgStatus, "");
+        setStatus(contactStatus, "");
+    }
+
+    // ---------- Lagre foreningsinfo ----------
+    orgForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!effectiveOrgId) return;
+        setStatus(orgStatus, "Lagrer ...");
+
+        const bankAccount = orgBankAccountInput.value.trim();
+        const orgEmail = orgEmailInput.value.trim();
+
+        try {
+            const ref = doc(db, "organizations", effectiveOrgId);
+            await updateDoc(ref, {
+                bankAccount,
+                orgEmail
+            });
+
+            setStatus(orgStatus, "Foreningsinfo lagret ✅", "success");
+        } catch (err) {
+            console.error(err);
+            setStatus(orgStatus, "Kunne ikke lagre foreningsinfo.", "error");
+        }
+    });
+
+    // ---------- Lagre / endre ansvarlig kontaktperson ----------
+    contactForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!effectiveOrgId) return;
+        setStatus(contactStatus, "Lagrer kontaktperson ...");
+
+        const name = contactNameInput.value.trim();
+        const phone = contactPhoneInput.value.trim();
+        const email = contactEmailInput.value.trim();
+
+        if (!name || !phone || !email) {
+            setStatus(contactStatus, "Alle felt må fylles ut.", "error");
+            return;
+        }
+
+        const contactPerson = {
+            name,
+            phone,
+            email,
+            updatedAt: serverTimestamp(),
+            updatedBy: currentUser?.uid || null
+        };
+
+        try {
+            const ref = doc(db, "organizations", effectiveOrgId);
+            await updateDoc(ref, { contactPerson });
+
+            contactMeta.textContent = "Oppdatert: nå nettopp";
+            setStatus(contactStatus, "Kontaktperson oppdatert ✅", "success");
+        } catch (err) {
+            console.error(err);
+            setStatus(contactStatus, "Kunne ikke lagre kontaktperson.", "error");
+        }
+    });
+
+    // ---------- Event-type toggle ----------
+    function setEventType(type) {
+        eventType = type;
+        if (type === "single") {
+            typeSingleBtn.classList.add("active");
+            typeRecurringBtn.classList.remove("active");
+            singleDateFields.style.display = "block";
+            recurringDateFields.style.display = "none";
+        } else {
+            typeRecurringBtn.classList.add("active");
+            typeSingleBtn.classList.remove("active");
+            singleDateFields.style.display = "none";
+            recurringDateFields.style.display = "block";
+            if (!recurringDatesContainer.children.length) {
+                addRecurringDateRow();
+            }
+        }
+        setStatus(eventStatus, "");
+    }
+
+    typeSingleBtn.addEventListener("click", () => {
+        resetEventFormToCreate();
+        setEventType("single");
+    });
+
+    typeRecurringBtn.addEventListener("click", () => {
+        resetEventFormToCreate();
+        setEventType("recurring");
+    });
+
+    // Begrens plasser toggle
+    limitSeatsCheckbox.addEventListener("change", () => {
+        if (limitSeatsCheckbox.checked) {
+            maxParticipantsInput.disabled = false;
+        } else {
+            maxParticipantsInput.disabled = true;
+            maxParticipantsInput.value = "";
+        }
+    });
+
+    // Påmeldingsåpnings-toggle
+    useRegOpenCheckbox.addEventListener("change", () => {
+        if (useRegOpenCheckbox.checked) {
+            regOpenFields.style.display = "flex";
+        } else {
+            regOpenFields.style.display = "none";
+            regOpenDateInput.value = "";
+            regOpenTimeInput.value = "";
+        }
+    });
+
+    function addRecurringDateRow(date = "", start = "", end = "", eventId = null) {
+        const row = document.createElement("div");
+        row.className = "date-row";
+
+        if (eventId) {
+            row.dataset.eventId = eventId;
+        }
+
+        const dateInput = document.createElement("input");
+        dateInput.type = "date";
+        dateInput.value = date;
+
+        const startInput = document.createElement("input");
+        startInput.type = "time";
+        startInput.value = start;
+
+        const endInput = document.createElement("input");
+        endInput.type = "time";
+        endInput.value = end;
+
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "btn-small btn-secondary";
+        removeBtn.textContent = "X";
+        removeBtn.style.minWidth = "32px";
+        removeBtn.addEventListener("click", () => {
+            recurringDatesContainer.removeChild(row);
+        });
+
+        row.appendChild(dateInput);
+        row.appendChild(startInput);
+        row.appendChild(endInput);
+        row.appendChild(removeBtn);
+
+        recurringDatesContainer.appendChild(row);
+        return row;
+    }
+
+    addRecurringDateBtn.addEventListener("click", () => {
+        const rows = recurringDatesContainer.children;
+
+        if (rows.length > 0) {
+            const lastRow = rows[rows.length - 1];
+            const inputs = lastRow.querySelectorAll("input");
+            const lastStart = inputs[1]?.value || "";
+            const lastEnd   = inputs[2]?.value || "";
+            addRecurringDateRow("", lastStart, lastEnd);
+        } else {
+            addRecurringDateRow();
+        }
+    });
+
+    // ---------- Event-opprettelse / serie-oppdatering ----------
+    function parseIntOrNull(value) {
+        if (value === "" || value === null || value === undefined) return null;
+        const n = parseInt(value, 10);
+        return isNaN(n) ? null : n;
+    }
+
+    function buildDateTime(dateStr, timeStr) {
+        if (!dateStr || !timeStr) return null;
+        const iso = `${dateStr}T${timeStr}:00`;
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return null;
+        return d;
+    }
+
+    function generateSeriesId() {
+        return (
+            "series_" +
+            Date.now().toString(36) +
+            "_" +
+            Math.random().toString(36).substring(2, 8)
+        );
+    }
+
+    eventForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!effectiveOrgId) return;
+
+        const title = eventTitleInput.value.trim();
+        if (!title) {
+            setStatus(eventStatus, "Tittel kan ikke være tom.", "error");
+            return;
+        }
+
+        const location = eventLocationInput.value.trim();
+        const description = eventDescriptionInput.value.trim();
+
+        // Plasser
+        let maxParticipants = null;
+        if (limitSeatsCheckbox.checked) {
+            maxParticipants = parseIntOrNull(maxParticipantsInput.value);
+            if (!maxParticipants || maxParticipants < 1) {
+                setStatus(eventStatus, "Angi et gyldig maks antall plasser.", "error");
+                return;
+            }
+        }
+
+        // Pris
+        const priceMember = parseIntOrNull(priceMemberInput.value) ?? 0;
+        const priceNonMember = parseIntOrNull(priceNonMemberInput.value) ?? 0;
+        const isPaidEvent = (priceMember > 0) || (priceNonMember > 0);
+
+        // Påmeldingsåpning
+        let regOpensAt = null;
+        if (useRegOpenCheckbox.checked) {
+            if (!regOpenDateInput.value || !regOpenTimeInput.value) {
+                setStatus(eventStatus, "Velg dato og tid for når påmelding åpner.", "error");
+                return;
+            }
+            const reg = buildDateTime(regOpenDateInput.value, regOpenTimeInput.value);
+            if (reg) regOpensAt = Timestamp.fromDate(reg);
+        }
+
+        let dateEntries = [];
+
+        if (eventType === "single") {
+            const start = buildDateTime(singleDateInput.value, singleStartTimeInput.value);
+            const end = buildDateTime(singleDateInput.value, singleEndTimeInput.value);
+
+            if (!start || !end) {
+                setStatus(eventStatus, "Fyll inn dato, start- og sluttid.", "error");
+                return;
+            }
+            if (end <= start) {
+                setStatus(eventStatus, "Sluttid må være etter starttid.", "error");
+                return;
+            }
+
+            dateEntries.push({ start, end });
+        } else {
+            const rows = Array.from(recurringDatesContainer.children);
+            rows.forEach((row) => {
+                const [dateInput, startInput, endInput] = row.querySelectorAll("input");
+                const start = buildDateTime(dateInput.value, startInput.value);
+                const end = buildDateTime(dateInput.value, endInput.value);
+                if (start && end && end > start) {
+                    dateEntries.push({
+                        start,
+                        end,
+                        eventId: row.dataset.eventId || null
+                    });
+                }
+            });
+
+            if (!dateEntries.length) {
+                setStatus(eventStatus, "Legg til minst én gyldig dato for gjentagende event.", "error");
+                return;
+            }
+        }
+
+        // Felles data
+        const commonData = {
+            organizationId: effectiveOrgId,
+            title,
+            location,
+            description,
+            maxParticipants: maxParticipants ?? null,
+            isPaidEvent,
+            priceMember,
+            priceNonMember,
+            registrationOpensAt: regOpensAt,
+        };
+
+        try {
+            const eventsRef = collection(db, "events");
+
+            // --- REDIGER ENKELTSTÅENDE EVENT ---
+            if (eventType === "single" && editingSingleEventId) {
+                setStatus(eventStatus, "Oppdaterer event ...");
+
+                const { start, end } = dateEntries[0];
+                const ref = doc(db, "events", editingSingleEventId);
+
+                await updateDoc(ref, {
+                    ...commonData,
+                    isRecurring: false,
+                    seriesId: null,
+                    startDateTime: Timestamp.fromDate(start),
+                    endDateTime: Timestamp.fromDate(end),
+                    updatedAt: serverTimestamp(),
+                    updatedBy: currentUser?.uid || null
+                });
+
+                setStatus(eventStatus, "Event oppdatert ✅", "success");
+                resetEventFormToCreate();
+                await loadEventsForOrg(effectiveOrgId);
+                return;
+            }
+
+            // --- NY GJENTAGENDE SERIE ---
+            if (eventType === "recurring" && !editingSeriesId) {
+                setStatus(eventStatus, "Oppretter gjentagende event-serie ...");
+                const seriesId = generateSeriesId();
+                const nowTs = serverTimestamp();
+
+                const writes = dateEntries.map(({ start, end }) =>
+                    addDoc(eventsRef, {
+                        ...commonData,
+                        maxParticipants: commonData.maxParticipants,
+                        registeredCount: 0,
+                        isRecurring: true,
+                        startDateTime: Timestamp.fromDate(start),
+                        endDateTime: Timestamp.fromDate(end),
+                        seriesId,
+                        createdAt: nowTs,
+                        createdBy: currentUser?.uid || null
+                    })
+                );
+
+                await Promise.all(writes);
+                setStatus(eventStatus, "Gjentagende event-serie opprettet ✅", "success");
+                resetEventFormToCreate();
+                await loadEventsForOrg(effectiveOrgId);
+                return;
+            }
+
+            // --- REDIGERE EKSISTERENDE SERIE ---
+            if (eventType === "recurring" && editingSeriesId) {
+                setStatus(eventStatus, "Oppdaterer gjentagende event-serie ...");
+
+                const keptIds = new Set();
+                const toUpdate = [];
+                const toCreate = [];
+
+                dateEntries.forEach(({ start, end, eventId }) => {
+                    if (eventId) {
+                        keptIds.add(eventId);
+                        toUpdate.push({ eventId, start, end });
+                    } else {
+                        toCreate.push({ start, end });
+                    }
+                });
+
+                const toDeleteIds = currentSeriesEventIds
+                    ? [...currentSeriesEventIds].filter((id) => !keptIds.has(id))
+                    : [];
+
+                const ops = [];
+
+                // Oppdater eksisterende forekomster
+                toUpdate.forEach(({ eventId, start, end }) => {
+                    const ref = doc(db, "events", eventId);
+                    ops.push(
+                        updateDoc(ref, {
+                            ...commonData,
+                            isRecurring: true,
+                            startDateTime: Timestamp.fromDate(start),
+                            endDateTime: Timestamp.fromDate(end),
+                            seriesId: editingSeriesId,
+                            updatedAt: serverTimestamp(),
+                            updatedBy: currentUser?.uid || null
+                        })
+                    );
+                });
+
+                // Opprett nye forekomster
+                const nowTs = serverTimestamp();
+                toCreate.forEach(({ start, end }) => {
+                    ops.push(
+                        addDoc(eventsRef, {
+                            ...commonData,
+                            isRecurring: true,
+                            startDateTime: Timestamp.fromDate(start),
+                            endDateTime: Timestamp.fromDate(end),
+                            seriesId: editingSeriesId,
+                            createdAt: nowTs,
+                            createdBy: currentUser?.uid || null
+                        })
+                    );
+                });
+
+                // Slett fjernede forekomster
+                toDeleteIds.forEach((id) => {
+                    const ref = doc(db, "events", id);
+                    ops.push(deleteDoc(ref));
+                });
+
+                await Promise.all(ops);
+
+                setStatus(eventStatus, "Serie oppdatert ✅", "success");
+                resetEventFormToCreate();
+                await loadEventsForOrg(effectiveOrgId);
+                return;
+            }
+
+            // --- NY ENKELTSTÅENDE EVENT ---
+            setStatus(eventStatus, "Oppretter event ...");
+            const nowTs = serverTimestamp();
+
+            const { start, end } = dateEntries[0];
+            await addDoc(eventsRef, {
+                ...commonData,
+                isRecurring: false,
+                seriesId: null,
+                registeredCount: 0,
+                startDateTime: Timestamp.fromDate(start),
+                endDateTime: Timestamp.fromDate(end),
+                createdAt: nowTs,
+                createdBy: currentUser?.uid || null
+            });
+
+            setStatus(eventStatus, "Event opprettet ✅", "success");
+            resetEventFormToCreate();
+            await loadEventsForOrg(effectiveOrgId);
+        } catch (err) {
+            console.error(err);
+            setStatus(eventStatus, "Kunne ikke opprette/oppdatere event.", "error");
+        }
+    });
+
+    function resetEventFormToCreate() {
+        editingSeriesId = null;
+        currentSeriesEventIds = null;
+        editingSingleEventId = null;
+
+        eventForm.reset();
+        eventSubmitBtn.textContent = "Opprett event";
+        cancelEditBtn.style.display = "none";
+
+        limitSeatsCheckbox.checked = false;
+        maxParticipantsInput.disabled = true;
+        maxParticipantsInput.value = "";
+        useRegOpenCheckbox.checked = false;
+        regOpenFields.style.display = "none";
+        regOpenDateInput.value = "";
+        regOpenTimeInput.value = "";
+        recurringDatesContainer.innerHTML = "";
+
+        setEventType("single");
+        setStatus(eventStatus, "");
+    }
+
+    cancelEditBtn.addEventListener("click", () => {
+        resetEventFormToCreate();
+    });
+
+    // ---------- Hent og vis events ----------
+    async function loadEventsForOrg(orgId) {
+        currentOrgEvents = [];
+        eventListEl.innerHTML = "";
+
+        if (!orgId) return;
+
+        try {
+            const eventsRef = collection(db, "events");
+            const qEvents = query(
+                eventsRef,
+                where("organizationId", "==", orgId)
+            );
+            const snap = await getDocs(qEvents);
+
+            currentOrgEvents = snap.docs.map((d) => {
+                const data = d.data();
+                return {
+                    id: d.id,
+                    ...data,
+                    startDateTime: data.startDateTime?.toDate?.() ?? null,
+                    endDateTime: data.endDateTime?.toDate?.() ?? null
+                };
+            });
+
+            currentOrgEvents.sort((a, b) => {
+                if (!a.startDateTime || !b.startDateTime) return 0;
+                return a.startDateTime - b.startDateTime;
+            });
+
+            renderEventList();
+        } catch (err) {
+            console.error("Feil ved lasting av events:", err);
+            eventListEl.innerHTML =
+                '<div class="event-list-item">Kunne ikke laste events.</div>';
+        }
+    }
+
+    function formatEventDateTime(evt) {
+        if (!evt.startDateTime || !evt.endDateTime) return "Ukjent tid";
+
+        const d = evt.startDateTime;
+        const day = d.getDate().toString().padStart(2, "0");
+        const month = (d.getMonth() + 1).toString().padStart(2, "0");
+        const year = d.getFullYear().toString().slice(-2);
+
+        const pad = (n) => String(n).padStart(2, "0");
+        const sH = pad(d.getHours());
+        const sM = pad(d.getMinutes());
+        const eH = pad(evt.endDateTime.getHours());
+        const eM = pad(evt.endDateTime.getMinutes());
+
+        return `${day}.${month}.${year} kl. ${sH}:${sM}–${eH}:${eM}`;
+    }
+
+    function renderEventList() {
+        eventListEl.innerHTML = "";
+
+        if (!currentOrgEvents.length) {
+            eventListEl.innerHTML =
+                '<div class="event-list-item">Ingen event registrert for denne foreningen enda.</div>';
+            return;
+        }
+
+        currentOrgEvents.forEach((evt) => {
+            const item = document.createElement("div");
+            item.className = "event-list-item clickable";
+
+            if (evt.isRecurring && evt.seriesId) {
+                item.title = "Klikk for å redigere denne gjentagende serien";
+                item.addEventListener("click", () => startEditSeries(evt.seriesId));
+            } else {
+                item.title = "Klikk for å redigere dette eventet";
+                item.addEventListener("click", () => startEditSingle(evt.id));
+            }
+
+            const rowTop = document.createElement("div");
+            rowTop.className = "event-list-row";
+
+            const titleEl = document.createElement("div");
+            titleEl.className = "event-list-title";
+            titleEl.textContent = evt.title || "(uten tittel)";
+
+            const typeEl = document.createElement("div");
+            typeEl.className = "event-list-meta";
+            typeEl.textContent = evt.isRecurring ? "Gjentagende" : "Enkeltstående";
+
+            rowTop.appendChild(titleEl);
+            rowTop.appendChild(typeEl);
+
+            const rowBottom = document.createElement("div");
+            rowBottom.className = "event-list-meta";
+            rowBottom.textContent = formatEventDateTime(evt);
+
+            const actionsRow = document.createElement("div");
+            actionsRow.className = "event-actions";
+
+            const copyBtn = document.createElement("button");
+            copyBtn.type = "button";
+            copyBtn.className = "link-button";
+            copyBtn.textContent = "Kopier";
+            copyBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (evt.isRecurring && evt.seriesId) {
+                    startCopySeries(evt.seriesId);
+                } else {
+                    startCopySingle(evt.id);
+                }
+            });
+
+            actionsRow.appendChild(copyBtn);
+
+            item.appendChild(rowTop);
+            item.appendChild(rowBottom);
+            item.appendChild(actionsRow);
+
+            eventListEl.appendChild(item);
+        });
+    }
+
+    // ---------- Hjelpere for dato/tid ----------
+    function toDateStr(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+    }
+    function toTimeStr(d) {
+        const h = String(d.getHours()).padStart(2, "0");
+        const m = String(d.getMinutes()).padStart(2, "0");
+        return `${h}:${m}`;
+    }
+
+    // ---------- Rediger gjentagende serie ----------
+    function startEditSeries(seriesId) {
+        const seriesEvents = currentOrgEvents.filter(
+            (e) => e.seriesId === seriesId
+        );
+        if (!seriesEvents.length) return;
+
+        editingSeriesId = seriesId;
+        currentSeriesEventIds = new Set(seriesEvents.map((e) => e.id));
+        editingSingleEventId = null;
+
+        const base = seriesEvents[0];
+
+        setEventType("recurring");
+
+        eventTitleInput.value = base.title || "";
+        eventLocationInput.value = base.location || "";
+        eventDescriptionInput.value = base.description || "";
+
+        // Plasser
+        if (base.maxParticipants && base.maxParticipants > 0) {
+            limitSeatsCheckbox.checked = true;
+            maxParticipantsInput.disabled = false;
+            maxParticipantsInput.value = base.maxParticipants;
+        } else {
+            limitSeatsCheckbox.checked = false;
+            maxParticipantsInput.disabled = true;
+            maxParticipantsInput.value = "";
+        }
+
+        // Påmelding åpner
+        if (base.registrationOpensAt && base.registrationOpensAt.toDate) {
+            const d = base.registrationOpensAt.toDate();
+            useRegOpenCheckbox.checked = true;
+            regOpenFields.style.display = "flex";
+            regOpenDateInput.value = toDateStr(d);
+            regOpenTimeInput.value = toTimeStr(d);
+        } else {
+            useRegOpenCheckbox.checked = false;
+            regOpenFields.style.display = "none";
+            regOpenDateInput.value = "";
+            regOpenTimeInput.value = "";
+        }
+
+        // Pris
+        priceMemberInput.value = base.priceMember ?? 0;
+        priceNonMemberInput.value = base.priceNonMember ?? 0;
+
+        // Datoer
+        recurringDatesContainer.innerHTML = "";
+        seriesEvents.forEach((evt) => {
+            if (!evt.startDateTime || !evt.endDateTime) return;
+            const dateStr = toDateStr(evt.startDateTime);
+            const startStr = toTimeStr(evt.startDateTime);
+            const endStr = toTimeStr(evt.endDateTime);
+            addRecurringDateRow(dateStr, startStr, endStr, evt.id);
+        });
+
+        eventSubmitBtn.textContent = "Oppdater serie";
+        cancelEditBtn.style.display = "inline-block";
+        setStatus(
+            eventStatus,
+            "Redigerer gjentagende event-serie. Du kan endre tider, fjerne datoer eller legge til flere, og så trykke Oppdater serie.",
+            "success"
+        );
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---------- Rediger enkeltstående ----------
+    function startEditSingle(eventId) {
+        const evt = currentOrgEvents.find((e) => e.id === eventId);
+        if (!evt) return;
+
+        editingSingleEventId = eventId;
+        editingSeriesId = null;
+        currentSeriesEventIds = null;
+
+        setEventType("single");
+
+        eventTitleInput.value = evt.title || "";
+        eventLocationInput.value = evt.location || "";
+        eventDescriptionInput.value = evt.description || "";
+
+        // Plasser
+        if (evt.maxParticipants && evt.maxParticipants > 0) {
+            limitSeatsCheckbox.checked = true;
+            maxParticipantsInput.disabled = false;
+            maxParticipantsInput.value = evt.maxParticipants;
+        } else {
+            limitSeatsCheckbox.checked = false;
+            maxParticipantsInput.disabled = true;
+            maxParticipantsInput.value = "";
+        }
+
+        // Påmelding åpner
+        if (evt.registrationOpensAt && evt.registrationOpensAt.toDate) {
+            const d = evt.registrationOpensAt.toDate();
+            useRegOpenCheckbox.checked = true;
+            regOpenFields.style.display = "flex";
+            regOpenDateInput.value = toDateStr(d);
+            regOpenTimeInput.value = toTimeStr(d);
+        } else {
+            useRegOpenCheckbox.checked = false;
+            regOpenFields.style.display = "none";
+            regOpenDateInput.value = "";
+            regOpenTimeInput.value = "";
+        }
+
+        // Pris
+        priceMemberInput.value = evt.priceMember ?? 0;
+        priceNonMemberInput.value = evt.priceNonMember ?? 0;
+
+        // Dato/tid
+        if (evt.startDateTime && evt.endDateTime) {
+            const dStart = evt.startDateTime;
+            const dEnd = evt.endDateTime;
+            singleDateInput.value = toDateStr(dStart);
+            singleStartTimeInput.value = toTimeStr(dStart);
+            singleEndTimeInput.value = toTimeStr(dEnd);
+        } else {
+            singleDateInput.value = "";
+            singleStartTimeInput.value = "";
+            singleEndTimeInput.value = "";
+        }
+
+        eventSubmitBtn.textContent = "Oppdater event";
+        cancelEditBtn.style.display = "inline-block";
+        setStatus(
+            eventStatus,
+            "Redigerer enkeltstående event. Gjør endringer og trykk Oppdater event.",
+            "success"
+        );
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---------- Kopier enkeltstående ----------
+    function startCopySingle(eventId) {
+        const evt = currentOrgEvents.find((e) => e.id === eventId);
+        if (!evt) return;
+
+        editingSingleEventId = null;
+        editingSeriesId = null;
+        currentSeriesEventIds = null;
+
+        setEventType("single");
+
+        eventTitleInput.value = evt.title || "";
+        eventLocationInput.value = evt.location || "";
+        eventDescriptionInput.value = evt.description || "";
+
+        // Plasser
+        if (evt.maxParticipants && evt.maxParticipants > 0) {
+            limitSeatsCheckbox.checked = true;
+            maxParticipantsInput.disabled = false;
+            maxParticipantsInput.value = evt.maxParticipants;
+        } else {
+            limitSeatsCheckbox.checked = false;
+            maxParticipantsInput.disabled = true;
+            maxParticipantsInput.value = "";
+        }
+
+        // Påmelding åpner
+        if (evt.registrationOpensAt && evt.registrationOpensAt.toDate) {
+            const d = evt.registrationOpensAt.toDate();
+            useRegOpenCheckbox.checked = true;
+            regOpenFields.style.display = "flex";
+            regOpenDateInput.value = toDateStr(d);
+            regOpenTimeInput.value = toTimeStr(d);
+        } else {
+            useRegOpenCheckbox.checked = false;
+            regOpenFields.style.display = "none";
+            regOpenDateInput.value = "";
+            regOpenTimeInput.value = "";
+        }
+
+        // Pris
+        priceMemberInput.value = evt.priceMember ?? 0;
+        priceNonMemberInput.value = evt.priceNonMember ?? 0;
+
+        // Dato/tid
+        if (evt.startDateTime && evt.endDateTime) {
+            const dStart = evt.startDateTime;
+            const dEnd = evt.endDateTime;
+            singleDateInput.value = toDateStr(dStart);
+            singleStartTimeInput.value = toTimeStr(dStart);
+            singleEndTimeInput.value = toTimeStr(dEnd);
+        } else {
+            singleDateInput.value = "";
+            singleStartTimeInput.value = "";
+            singleEndTimeInput.value = "";
+        }
+
+        eventSubmitBtn.textContent = "Opprett event (kopi)";
+        cancelEditBtn.style.display = "none";
+        setStatus(
+            eventStatus,
+            "Kopierer enkeltstående event. Gjør eventuelle endringer og trykk Opprett event (kopi).",
+            "success"
+        );
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---------- Kopier gjentagende serie ----------
+    function startCopySeries(seriesId) {
+        const seriesEvents = currentOrgEvents.filter(
+            (e) => e.seriesId === seriesId
+        );
+        if (!seriesEvents.length) return;
+
+        editingSeriesId = null;
+        currentSeriesEventIds = null;
+        editingSingleEventId = null;
+
+        const base = seriesEvents[0];
+
+        setEventType("recurring");
+
+        eventTitleInput.value = base.title || "";
+        eventLocationInput.value = base.location || "";
+        eventDescriptionInput.value = base.description || "";
+
+        // Plasser
+        if (base.maxParticipants && base.maxParticipants > 0) {
+            limitSeatsCheckbox.checked = true;
+            maxParticipantsInput.disabled = false;
+            maxParticipantsInput.value = base.maxParticipants;
+        } else {
+            limitSeatsCheckbox.checked = false;
+            maxParticipantsInput.disabled = true;
+            maxParticipantsInput.value = "";
+        }
+
+        // Påmelding åpner
+        if (base.registrationOpensAt && base.registrationOpensAt.toDate) {
+            const d = base.registrationOpensAt.toDate();
+            useRegOpenCheckbox.checked = true;
+            regOpenFields.style.display = "flex";
+            regOpenDateInput.value = toDateStr(d);
+            regOpenTimeInput.value = toTimeStr(d);
+        } else {
+            useRegOpenCheckbox.checked = false;
+            regOpenFields.style.display = "none";
+            regOpenDateInput.value = "";
+            regOpenTimeInput.value = "";
+        }
+
+        // Pris
+        priceMemberInput.value = base.priceMember ?? 0;
+        priceNonMemberInput.value = base.priceNonMember ?? 0;
+
+        // Datoer (uten eventId, så dette blir nye docs)
+        recurringDatesContainer.innerHTML = "";
+        seriesEvents.forEach((evt) => {
+            if (!evt.startDateTime || !evt.endDateTime) return;
+            const dateStr = toDateStr(evt.startDateTime);
+            const startStr = toTimeStr(evt.startDateTime);
+            const endStr = toTimeStr(evt.endDateTime);
+            addRecurringDateRow(dateStr, startStr, endStr, null);
+        });
+
+        eventSubmitBtn.textContent = "Opprett event (kopi)";
+        cancelEditBtn.style.display = "none";
+        setStatus(
+            eventStatus,
+            "Kopierer gjentagende event-serie. Gjør endringer og trykk Opprett event (kopi) for å lage en ny serie.",
+            "success"
+        );
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---------- Logg ut & tilbake ----------
+    logoutBtnOrg.addEventListener("click", async () => {
+        try {
+            await signOut(auth);
+            window.location.href = "index.html";
+        } catch (err) {
+            console.error("Feil ved utlogging:", err);
+            alert("Kunne ikke logge ut.");
+        }
+    });
+
+    backToCalendarBtn.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    gotoProfileBtn.addEventListener("click", () => {
+        window.location.href = "my-page.html"; // eller riktig filnavn på "Min side"
+    });
+
+    // Init event-type UI defaults
+    setEventType("single");
+    limitSeatsCheckbox.checked = false;
+    maxParticipantsInput.disabled = true;
+    useRegOpenCheckbox.checked = false;
+    regOpenFields.style.display = "none";
+</script>
+</body>
+</html>

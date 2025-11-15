@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8" />
+    <title>Logg inn – Foreningskalender</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --accent: #2563eb;
+            --accent-soft: #dbeafe;
+            --text: #111827;
+            --muted: #6b7280;
+            --radius: 12px;
+            --shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            --danger: #dc2626;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px 18px 18px;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 1.4rem;
+        }
+
+        .sub {
+            margin: 0 0 16px;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 12px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            padding: 3px;
+        }
+
+        .tab {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 0.85rem;
+            padding: 8px 0;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(15,23,42,0.12);
+            font-weight: 600;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        input {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft);
+            background: #ffffff;
+        }
+
+        .btn {
+            margin-top: 6px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        .status {
+            margin-top: 6px;
+            font-size: 0.8rem;
+        }
+
+        .status--error { color: var(--danger); }
+        .status--success { color: #15803d; }
+
+        .link-row {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .link-row a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .back-link a {
+            color: var(--muted);
+            text-decoration: none;
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 24px; }
+            .card { padding: 24px 22px 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Logg inn</h1>
+    <p class="sub">Felles innlogging for studenter og foreningsansvarlige.</p>
+
+    <div class="tabs">
+        <button class="tab active" id="tabLogin">Logg inn</button>
+        <button class="tab" id="tabSignup">Registrer bruker</button>
+    </div>
+
+    <!-- Logg inn -->
+    <form id="loginForm">
+        <div class="field">
+            <label for="loginEmail">E-post</label>
+            <input id="loginEmail" type="email" autocomplete="email" required />
+        </div>
+        <div class="field">
+            <label for="loginPassword">Passord</label>
+            <input id="loginPassword" type="password" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Logg inn</button>
+        <div id="loginStatus" class="status"></div>
+    </form>
+
+    <!-- Registrer -->
+    <form id="signupForm" style="display:none;">
+        <div class="field">
+            <label for="signupName">Navn</label>
+            <input id="signupName" type="text" autocomplete="name" required />
+        </div>
+        <div class="field">
+            <label for="signupEmail">E-post</label>
+            <input id="signupEmail" type="email" autocomplete="email" required />
+        </div>
+        <div class="field">
+            <label for="signupPassword">Passord</label>
+            <input id="signupPassword" type="password" autocomplete="new-password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Opprett konto</button>
+        <div id="signupStatus" class="status"></div>
+        <p class="link-row">
+            Når du registrerer deg blir du vanlig bruker (student).<br />
+            Foreningsansvarlig-rolle tildeles senere av admin.
+        </p>
+    </form>
+
+    <p class="back-link">
+        <a href="index.html">← Tilbake til kalender</a>
+    </p>
+</div>
+
+<script type="module">
+    import { db, auth } from "./firebase-init.js";
+    import {
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        updateProfile,
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+        doc,
+        setDoc,
+        serverTimestamp,
+        getDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const tabLogin = document.getElementById("tabLogin");
+    const tabSignup = document.getElementById("tabSignup");
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const loginStatus = document.getElementById("loginStatus");
+    const signupStatus = document.getElementById("signupStatus");
+
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const signupName = document.getElementById("signupName");
+    const signupEmail = document.getElementById("signupEmail");
+    const signupPassword = document.getElementById("signupPassword");
+
+    function setStatus(el, msg, type) {
+        el.textContent = msg || "";
+        el.classList.remove("status--error", "status--success");
+        if (!msg) return;
+        if (type === "error") el.classList.add("status--error");
+        if (type === "success") el.classList.add("status--success");
+    }
+
+    // Bytt mellom faner
+    tabLogin.addEventListener("click", () => {
+        tabLogin.classList.add("active");
+        tabSignup.classList.remove("active");
+        loginForm.style.display = "flex";
+        signupForm.style.display = "none";
+        setStatus(loginStatus, "");
+        setStatus(signupStatus, "");
+    });
+
+    tabSignup.addEventListener("click", () => {
+        tabSignup.classList.add("active");
+        tabLogin.classList.remove("active");
+        signupForm.style.display = "flex";
+        loginForm.style.display = "none";
+        setStatus(loginStatus, "");
+        setStatus(signupStatus, "");
+    });
+
+    // Allerede logget inn? Rett til index.
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) return;
+
+        // Sørg for at det finnes et users-dokument – i tilfelle gamle brukere
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
+        if (!snap.exists()) {
+            await setDoc(userRef, {
+                displayName: user.displayName || "",
+                email: user.email,
+                role: "student",
+                adminOf: [],
+                favoriteOrganizations: [],
+                createdAt: serverTimestamp()
+            });
+        }
+
+        window.location.href = "index.html";
+    });
+
+    // Logg inn
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        setStatus(loginStatus, "Logger inn ...", "success");
+
+        try {
+            await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
+            // onAuthStateChanged vil ta redirect
+        } catch (err) {
+            console.error(err);
+            let msg = "Kunne ikke logge inn.";
+            if (err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
+                msg = "Feil e-post eller passord.";
+            }
+            setStatus(loginStatus, msg, "error");
+        }
+    });
+
+    // Registrer bruker (alltid vanlig student)
+    signupForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        setStatus(signupStatus, "Oppretter konto ...", "success");
+
+        const name = signupName.value.trim();
+        const email = signupEmail.value.trim();
+        const password = signupPassword.value;
+
+        if (!name) {
+            setStatus(signupStatus, "Skriv inn navn.", "error");
+            return;
+        }
+
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+
+            // Oppdater displayName i Auth
+            await updateProfile(cred.user, { displayName: name });
+
+            // Opprett users/{uid}-dokument med role = student
+            const userRef = doc(db, "users", cred.user.uid);
+            await setDoc(userRef, {
+                displayName: name,
+                email,
+                role: "student",
+                adminOf: [],
+                favoriteOrganizations: [],
+                createdAt: serverTimestamp()
+            });
+
+            setStatus(signupStatus, "Konto opprettet 🎉 Sender deg til kalenderen ...", "success");
+            // onAuthStateChanged vil redirecte til index
+        } catch (err) {
+            console.error(err);
+            let msg = "Kunne ikke opprette bruker.";
+            if (err.code === "auth/email-already-in-use") msg = "Denne e-posten er allerede i bruk.";
+            if (err.code === "auth/weak-password") msg = "Passordet er for svakt.";
+            setStatus(signupStatus, msg, "error");
+        }
+    });
+</script>
+</body>
+</html>
