@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
     <meta charset="UTF-8" />
-    <title>Foreningsinnstillinger – Foreningskalender</title>
+    <title>Forening – Foreningskalender</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -37,7 +37,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
-            padding: 8px 0 16px;
+            padding: 8px 0 8px;
         }
 
         .header-left {
@@ -89,6 +89,40 @@
         .btn-secondary {
             background: #e5e7eb;
             color: #111827;
+        }
+
+        .org-toggle-mobile {
+            display: none;
+            margin: 4px 0 10px;
+        }
+
+        .org-toggle-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .org-toggle-mobile-list {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .org-toggle-chip {
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.75rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .org-toggle-chip.active {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            color: #1d4ed8;
         }
 
         main {
@@ -291,13 +325,22 @@
                 flex: 1 1 0;
             }
         }
+
+        @media (max-width: 767px) {
+            .org-switcher {
+                display: none;
+            }
+            .org-toggle-mobile {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="page">
     <header>
         <div class="header-left">
-            <h1>Foreningsinnstillinger</h1>
+            <h1>Forening</h1>
             <div class="org-switcher">
                 <select id="orgSelector"></select>
             </div>
@@ -308,6 +351,12 @@
             <button class="btn-small" id="logoutBtnOrg">Logg ut</button>
         </div>
     </header>
+
+    <!-- Mobil: toggle mellom foreninger under tittel + knapper -->
+    <div class="org-toggle-mobile">
+        <div class="org-toggle-label">Velg forening</div>
+        <div class="org-toggle-mobile-list" id="orgToggleMobileList"></div>
+    </div>
 
     <main>
         <!-- Øverste rad: Foreningsinfo + kontaktperson -->
@@ -496,6 +545,7 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const orgSelector = document.getElementById("orgSelector");
+    const orgToggleMobileList = document.getElementById("orgToggleMobileList");
     const backToCalendarBtn = document.getElementById("backToCalendarBtn");
     const gotoProfileBtn = document.getElementById("gotoProfileBtn");
     const logoutBtnOrg = document.getElementById("logoutBtnOrg");
@@ -623,8 +673,7 @@
         }
 
         populateOrgSelector();
-        await loadOrganization(effectiveOrgId);
-        await loadEventsForOrg(effectiveOrgId);
+        await onOrgChanged();
     }
 
     function populateOrgSelector() {
@@ -642,16 +691,62 @@
         });
 
         orgSelector.disabled = relevant.length <= 1;
+
+        buildOrgMobileToggle();
+        updateOrgToggleUI();
+    }
+
+    function buildOrgMobileToggle() {
+        if (!orgToggleMobileList) return;
+        orgToggleMobileList.innerHTML = "";
+
+        const relevant = allOrganizations.filter((o) =>
+            allowedOrgIds.includes(o.id)
+        );
+
+        relevant.forEach((org) => {
+            const chip = document.createElement("button");
+            chip.type = "button";
+            chip.className = "org-toggle-chip";
+            chip.dataset.orgId = org.id;
+            chip.textContent = org.shortCode || org.name || org.id;
+
+            if (org.id === effectiveOrgId) {
+                chip.classList.add("active");
+            }
+
+            chip.addEventListener("click", async () => {
+                if (effectiveOrgId === org.id) return;
+                effectiveOrgId = org.id;
+                orgSelector.value = org.id;
+                await onOrgChanged();
+            });
+
+            orgToggleMobileList.appendChild(chip);
+        });
+    }
+
+    function updateOrgToggleUI() {
+        if (!orgToggleMobileList) return;
+        orgToggleMobileList.querySelectorAll(".org-toggle-chip").forEach(chip => {
+            chip.classList.toggle("active", chip.dataset.orgId === effectiveOrgId);
+        });
     }
 
     orgSelector.addEventListener("change", async () => {
         effectiveOrgId = orgSelector.value;
+        await onOrgChanged();
+    });
+
+    async function onOrgChanged() {
+        if (!effectiveOrgId) return;
         setStatus(orgStatus, "Laster forening ...");
         await loadOrganization(effectiveOrgId);
         await loadEventsForOrg(effectiveOrgId);
         resetEventFormToCreate();
+        updateOrgToggleUI();
         setStatus(orgStatus, "");
-    });
+    }
 
     // ---------- Last forening ----------
     async function loadOrganization(orgId) {
@@ -1176,7 +1271,7 @@
     });
 
     gotoProfileBtn.addEventListener("click", () => {
-        window.location.href = "profile.html"; // endre hvis filen heter noe annet
+        window.location.href = "my-page.html"; // endre hvis filen heter noe annet
     });
 
     logoutBtnOrg.addEventListener("click", async () => {

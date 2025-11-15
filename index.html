@@ -394,6 +394,11 @@
                 display: block;
             }
         }
+        @media (max-width: 899px) {
+            .calendar-header {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -529,15 +534,31 @@
     let orgMap = new Map(); // orgId -> data
     let favoriteOrgIds = new Set();
 
-    let allEventsForMonth = [];    // alle events for aktiv måned
+    let allEventsForMonth = [];    // alle events for aktiv måned (desktop)
+    let allUpcomingEvents = [];    // alle fremtidige events (mobil)
     let filteredEvents = [];       // events etter filter
 
     let activeFilterType = "all";  // "all" | "favorites" | "org"
     let activeOrgFilterId = null;
 
-    // Måned-state
+    // Måned-state (for desktop)
     let currentMonthDate = new Date();
     currentMonthDate.setDate(1);
+
+    // Responsivt: mobil vs desktop
+    let isMobile = window.matchMedia("(max-width: 899px)").matches;
+
+    const mq = window.matchMedia("(max-width: 899px)");
+    mq.addEventListener("change", async (e) => {
+        isMobile = e.matches;
+
+        if (isMobile) {
+            await loadAllUpcomingEvents();
+        } else {
+            await loadEventsForCurrentMonth();
+        }
+        applyFilter(activeFilterType, activeOrgFilterId);
+    });
 
     function setStatus(el, msg, type = null) {
         el.textContent = msg || "";
@@ -579,7 +600,13 @@
     async function initData() {
         await loadOrganizations();
         buildOrgChips();
-        await loadEventsForCurrentMonth();
+
+        if (isMobile) {
+            await loadAllUpcomingEvents();
+        } else {
+            await loadEventsForCurrentMonth();
+        }
+
         applyFilter("all", null);
     }
 
@@ -672,33 +699,60 @@
         monthLabelEl.textContent = formatMonthLabel(currentMonthDate);
     }
 
+    async function loadAllUpcomingEvents() {
+        setStatus(eventsStatus, "Laster kommende events ...");
+
+        const now = new Date();
+        const eventsRef = collection(db, "events");
+        const qEvents = query(
+            eventsRef,
+            where("startDateTime", ">=", now),
+            orderBy("startDateTime", "asc")
+        );
+
+        const snap = await getDocs(qEvents);
+        allUpcomingEvents = snap.docs.map(d => {
+            const data = d.data();
+            return {
+                id: d.id,
+                ...data,
+                start: data.startDateTime?.toDate?.() ?? null,
+                end: data.endDateTime?.toDate?.() ?? null
+            };
+        });
+
+        setStatus(eventsStatus, "");
+    }
+
     // -------- Filtrering --------
     function applyFilter(type, orgId) {
         activeFilterType = type;
         activeOrgFilterId = orgId || null;
 
+        const baseEvents = isMobile ? allUpcomingEvents : allEventsForMonth;
+
         if (type === "all") {
-            filteredEvents = [...allEventsForMonth];
+            filteredEvents = [...baseEvents];
             setStatus(filterStatus, "");
         } else if (type === "favorites") {
             if (!favoriteOrgIds.size) {
                 filteredEvents = [];
                 setStatus(filterStatus, "Ingen favorittforeninger valgt enda.", "error");
             } else {
-                filteredEvents = allEventsForMonth.filter(evt =>
+                filteredEvents = baseEvents.filter(evt =>
                     favoriteOrgIds.has(evt.organizationId)
                 );
                 setStatus(filterStatus, "");
             }
         } else if (type === "org" && orgId) {
-            filteredEvents = allEventsForMonth.filter(evt => evt.organizationId === orgId);
+            filteredEvents = baseEvents.filter(evt => evt.organizationId === orgId);
             const org = orgMap.get(orgId);
             setStatus(
                 filterStatus,
                 `Viser kun events fra ${org?.shortCode || org?.name || "forening"}.`
             );
         } else {
-            filteredEvents = [...allEventsForMonth];
+            filteredEvents = [...baseEvents];
             setStatus(filterStatus, "");
         }
 
@@ -928,6 +982,8 @@
 
     // -------- Navigasjon måned --------
     prevMonthBtn.addEventListener("click", async () => {
+        if (isMobile) return; // ingen månedstoggling på mobil
+
         currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
         currentMonthDate.setDate(1);
         await loadEventsForCurrentMonth();
@@ -935,6 +991,8 @@
     });
 
     nextMonthBtn.addEventListener("click", async () => {
+        if (isMobile) return; // ingen månedstoggling på mobil
+
         currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
         currentMonthDate.setDate(1);
         await loadEventsForCurrentMonth();
