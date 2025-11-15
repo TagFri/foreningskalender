@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
     <meta charset="UTF-8" />
-    <title>Foreningskalender</title>
+    <title>Foreningskalender – Fakultet</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
         :root {
@@ -14,11 +14,10 @@
             --muted: #6b7280;
             --radius: 12px;
             --shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+            --danger: #dc2626;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -28,31 +27,25 @@
         }
 
         .page {
-            max-width: 960px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 16px;
         }
 
         header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 12px;
-            padding: 4px 0 12px;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0 16px;
         }
 
-        .title-group {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+        h1 {
+            margin: 0 0 2px;
+            font-size: 1.4rem;
         }
 
-        header h1 {
-            font-size: 1.3rem;
-            margin: 0;
-        }
-
-        header p {
+        .sub {
             margin: 0;
             font-size: 0.85rem;
             color: var(--muted);
@@ -76,263 +69,259 @@
             white-space: nowrap;
         }
 
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
         main {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        .filters-card,
-        .events-card {
+        .card {
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: 12px 12px 16px;
+            padding: 12px 16px;
         }
 
-        .filters-header {
+        .filters-row {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .filters-header h2 {
-            font-size: 1rem;
-            margin: 0;
-        }
-
-        .filters-actions {
-            display: flex;
-            gap: 6px;
             align-items: center;
         }
 
-        .btn-circle {
-            padding-inline: 10px;
-        }
-
-        #favoritesBtn {
-            background: #f3f4f6;
-            color: #111827;
-        }
-
-        #favoritesBtn.active {
-            background: var(--accent);
-            color: #ffffff;
-        }
-
-        #favoritesBtn.disabled {
-            opacity: 0.5;
-            cursor: default;
-        }
-
-        .filter-chips {
-            display: flex;
-            overflow-x: auto;
-            gap: 8px;
-            padding-bottom: 4px;
-            margin-bottom: 4px;
-        }
-
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .filter-btn {
             padding: 6px 10px;
             border-radius: 999px;
             border: 1px solid #e5e7eb;
-            font-size: 0.8rem;
             background: #f9fafb;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .chip-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 999px;
-            background: #9ca3af;
-        }
-
-        .chip.active {
-            background: var(--accent-soft);
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .chip::-webkit-scrollbar {
-            display: none;
-        }
-
-        .filter-note {
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin: 0;
-        }
-
-        .events-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .events-header h2 {
-            font-size: 1rem;
-            margin: 0;
-        }
-
-        .events-count {
-            font-size: 0.75rem;
-            color: var(--muted);
-        }
-
-        .event-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .event-card {
-            display: flex;
-            gap: 10px;
-            padding: 10px 10px 10px 8px;
-            border-radius: 10px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            cursor: pointer;
-        }
-
-        .event-date {
-            min-width: 52px;
-            text-align: center;
-            padding: 4px 6px;
-            border-radius: 8px;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-        }
-
-        .event-date-month {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--muted);
-            letter-spacing: 0.05em;
-        }
-
-        .event-date-day {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .event-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            min-width: 0;
-        }
-
-        .event-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 6px;
-        }
-
-        .event-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .event-org-pill {
-            flex-shrink: 0;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 999px;
-            background: #eef2ff;
-            color: #4f46e5;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .event-org-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 999px;
-            background: #4f46e5;
-        }
-
-        .event-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 10px;
             font-size: 0.8rem;
-            color: var(--muted);
-        }
-
-        .event-meta span {
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 4px;
         }
 
-        .event-meta .dot {
-            width: 4px;
-            height: 4px;
-            border-radius: 999px;
-            background: #d1d5db;
+        .filter-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
         }
 
-        .event-capacity {
+        .filter-btn .heart {
+            font-size: 0.9rem;
+        }
+
+        .org-chips {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .org-chip {
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.75rem;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .org-chip-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #9ca3af;
+        }
+
+        .org-chip.active {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .calendar-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .calendar-main {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .month-nav-btn {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .month-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* Måned-grid – skjules på mobil, vises på desktop */
+        .month-grid-wrapper {
+            display: none;
+        }
+
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 4px;
+            font-size: 0.8rem;
+        }
+
+        .month-grid-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-align: center;
+            padding-bottom: 2px;
+        }
+
+        .day-cell {
+            background: #f9fafb;
+            border-radius: 8px;
+            min-height: 92px;
+            padding: 4px 4px 4px 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .day-cell.outside {
+            opacity: 0.4;
+        }
+
+        .day-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 2px;
+        }
+
+        .event-pill {
+            border-radius: 6px;
+            padding: 2px 4px;
+            font-size: 0.7rem;
+            color: #0f172a;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .event-pill-title {
+            font-weight: 500;
+        }
+
+        .event-pill-org {
+            opacity: 0.9;
+            font-size: 0.65rem;
+        }
+
+        /* Listevisning (mobil og evt. under grid) */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .event-list-item {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 8px 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            cursor: pointer;
+        }
+
+        .event-list-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .event-list-meta {
             font-size: 0.75rem;
             color: var(--muted);
         }
 
-        .no-events {
-            font-size: 0.85rem;
-            color: var(--muted);
-            text-align: center;
-            padding: 12px 4px;
+        .event-list-org-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: #eff6ff;
+            font-size: 0.7rem;
         }
 
-        /* Modal */
-        .modal-backdrop {
+        .event-list-org-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #2563eb;
+        }
+
+        .status {
+            margin-top: 4px;
+            font-size: 0.8rem;
+        }
+
+        .status--error { color: var(--danger); }
+        .status--success { color: #15803d; }
+
+        /* Modal (sentrert) */
+        .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.35);
-            display: flex;
+            background: rgba(15, 23, 42, 0.45);
+            display: none;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease-out;
             z-index: 50;
         }
 
-        .modal-backdrop.open {
-            opacity: 1;
-            pointer-events: auto;
+        .modal-overlay.active {
+            display: flex;
         }
 
         .modal {
-            width: 100%;
-            max-width: 480px;
             background: #ffffff;
-            border-radius: 16px 16px 0 0;
-            padding: 16px 16px 20px;
-            box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.35);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 16px 18px;
         }
 
         .modal-header {
@@ -344,106 +333,65 @@
         }
 
         .modal-title {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             margin: 0;
         }
 
-        .modal-org-pill {
-            font-size: 0.75rem;
-            padding: 3px 9px;
-            border-radius: 999px;
-            background: #eef2ff;
-            color: #4f46e5;
-            display: inline-flex;
-            gap: 6px;
-            align-items: center;
+        .modal-close {
+            border: none;
+            background: transparent;
+            font-size: 1.1rem;
+            cursor: pointer;
         }
 
-        .modal-body {
+        .modal-body p {
             font-size: 0.85rem;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 12px;
+            margin: 4px 0;
         }
 
-        .modal-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .modal-label {
-            font-weight: 500;
+        .modal-body .label {
+            font-weight: 600;
         }
 
         .modal-footer {
+            margin-top: 10px;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .btn-primary {
-            padding: 10px 14px;
+        .chip-small {
+            padding: 2px 6px;
             border-radius: 999px;
-            border: none;
-            background: var(--accent);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            width: 100%;
+            font-size: 0.7rem;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
         }
 
-        .btn-ghost {
-            padding: 8px 10px;
-            border-radius: 999px;
-            border: none;
-            background: transparent;
-            font-size: 0.85rem;
+        .login-info {
+            font-size: 0.75rem;
             color: var(--muted);
-            cursor: pointer;
-            width: 100%;
         }
 
-        .badge-free {
-            font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 999px;
-            background: #dcfce7;
-            color: #15803d;
-            font-weight: 500;
-        }
-
-        .badge-paid {
-            font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 999px;
-            background: #fee2e2;
-            color: #b91c1c;
-            font-weight: 500;
-        }
-
-        @media (min-width: 768px) {
+        @media (min-width: 900px) {
             .page {
-                padding: 20px;
+                padding: 24px;
             }
-
-            main {
-                display: grid;
-                grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-                gap: 20px;
+            .calendar-layout {
+                flex-direction: row;
                 align-items: flex-start;
             }
-
-            .filters-card {
-                position: sticky;
-                top: 16px;
+            .calendar-main {
+                flex: 1.4;
             }
-
-            .modal {
-                border-radius: 16px;
+            .calendar-sidebar {
+                flex: 0.8;
+            }
+            .month-grid-wrapper {
+                display: block;
             }
         }
     </style>
@@ -451,105 +399,77 @@
 <body>
 <div class="page">
     <header>
-        <div class="title-group">
+        <div>
             <h1>Foreningskalender</h1>
-            <p>Se kommende arrangementer på fakultetet og meld deg på.</p>
+            <p class="sub">Se kommende events fra foreningene på fakultetet.</p>
         </div>
         <div class="header-actions">
+            <button class="btn-small btn-secondary" id="myPageBtn">Min side</button>
             <button class="btn-small btn-secondary" id="orgPageBtn">Foreningsside</button>
-            <button class="btn-small" id="loginBtn">Logg inn</button>
-            <button class="btn-small" id="logoutBtn" style="display: none; background: #e5e7eb; color: #111827;">
-                Logg ut
-            </button>
+            <button class="btn-small btn-secondary" id="loginBtn">Logg inn</button>
+            <button class="btn-small" id="logoutBtn" style="display:none;">Logg ut</button>
         </div>
     </header>
 
     <main>
         <!-- Filterkort -->
-        <section class="filters-card">
-            <div class="filters-header">
-                <h2>Foreninger</h2>
-                <div class="filters-actions">
-                    <button
-                            type="button"
-                            class="btn-small btn-circle"
-                            id="favoritesBtn"
-                            title="Vis bare favorittforeninger"
-                    >
-                        ♡
-                    </button>
-                    <button
-                            type="button"
-                            class="btn-small"
-                            id="clearFiltersBtn"
-                            style="background: #e5e7eb; color: #111827;"
-                    >
-                        Alle
-                    </button>
-                </div>
+        <section class="card">
+            <div class="filters-row">
+                <button class="filter-btn active" data-filter="all" id="filterAllBtn">
+                    Alle
+                </button>
+                <button class="filter-btn" data-filter="favorites" id="filterFavBtn">
+                    <span class="heart">♥</span> Favoritter
+                </button>
+                <div class="org-chips" id="orgChips"></div>
             </div>
-            <div id="orgFilters" class="filter-chips">
-                <!-- Dynamiske filterchips -->
-            </div>
-            <p class="filter-note" id="filterNote">
-                Ingen filter aktivt – viser alle foreninger.
-            </p>
+            <div id="filterStatus" class="status"></div>
         </section>
 
-        <!-- Event-liste -->
-        <section class="events-card">
-            <div class="events-header">
-                <h2>Kommende arrangementer</h2>
-                <span class="events-count" id="eventsCount">0 arrangementer</span>
+        <div class="calendar-layout">
+            <div class="calendar-main">
+                <!-- Måned-header -->
+                <section class="card">
+                    <div class="calendar-header">
+                        <div>
+                            <button class="month-nav-btn" id="prevMonthBtn">&laquo; Forrige</button>
+                            <button class="month-nav-btn" id="nextMonthBtn">Neste &raquo;</button>
+                        </div>
+                        <div class="month-label" id="monthLabel"></div>
+                    </div>
+
+                    <!-- Desktop: måned-grid -->
+                    <div class="month-grid-wrapper">
+                        <div class="month-grid" id="monthGrid"></div>
+                    </div>
+
+                    <!-- Mobil + tillegg: listevisning -->
+                    <div class="event-list" id="eventList"></div>
+                    <div id="eventsStatus" class="status"></div>
+                </section>
             </div>
-            <div id="eventList" class="event-list">
-                <!-- Eventkort -->
-            </div>
-            <div id="noEvents" class="no-events" style="display: none;">
-                Ingen kommende arrangementer i valgt filter.
-            </div>
-        </section>
+        </div>
     </main>
 </div>
 
-<!-- Modal for event-detaljer -->
-<div id="eventModalBackdrop" class="modal-backdrop">
+<!-- Modal for eventdetaljer (brukes fra både liste og måned-grid) -->
+<div class="modal-overlay" id="eventModal">
     <div class="modal">
         <div class="modal-header">
-            <h3 id="modalTitle" class="modal-title">Event-tittel</h3>
-            <span id="modalOrgPill" class="modal-org-pill">
-          <span class="event-org-dot"></span>
-          <span id="modalOrgCode">ORG</span>
-        </span>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
         </div>
-
         <div class="modal-body">
-            <div class="modal-row">
-                <span class="modal-label">Tid:</span>
-                <span id="modalTime"></span>
-            </div>
-            <div class="modal-row">
-                <span class="modal-label">Sted:</span>
-                <span id="modalLocation"></span>
-            </div>
-            <div class="modal-row">
-                <span class="modal-label">Pris:</span>
-                <span id="modalPrice"></span>
-            </div>
-            <div class="modal-row">
-                <span class="modal-label">Plasser:</span>
-                <span id="modalCapacity"></span>
-            </div>
-            <div class="modal-row">
-                <span class="modal-label">Forening:</span>
-                <span id="modalOrgName"></span>
-            </div>
+            <p id="modalOrg"></p>
+            <p id="modalWhen"></p>
+            <p id="modalLocation"></p>
             <p id="modalDescription"></p>
+            <p id="modalPrice"></p>
+            <p id="modalRegInfo"></p>
         </div>
-
         <div class="modal-footer">
-            <button id="signupBtn" class="btn-primary">Meld meg på</button>
-            <button id="closeModalBtn" class="btn-ghost">Lukk</button>
+            <span id="modalSeatInfo" class="chip-small"></span>
+            <span id="modalPaymentInfo" class="chip-small"></span>
         </div>
     </div>
 </div>
@@ -557,436 +477,502 @@
 <script type="module">
     import { db, auth } from "./firebase-init.js";
     import {
+        onAuthStateChanged,
+        signOut,
+        signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
         collection,
         getDocs,
+        doc,
+        getDoc,
         query,
         where,
-        orderBy,
-        Timestamp,
-        doc,
-        getDoc
+        orderBy
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import {
-        onAuthStateChanged,
-        signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    const orgFiltersEl = document.getElementById("orgFilters");
-    const filterNoteEl = document.getElementById("filterNote");
-    const favoritesBtn = document.getElementById("favoritesBtn");
-    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
-
-    const eventListEl = document.getElementById("eventList");
-    const eventsCountEl = document.getElementById("eventsCount");
-    const noEventsEl = document.getElementById("noEvents");
-
-    const eventModalBackdrop = document.getElementById("eventModalBackdrop");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalOrgPill = document.getElementById("modalOrgPill");
-    const modalOrgCode = document.getElementById("modalOrgCode");
-    const modalTime = document.getElementById("modalTime");
-    const modalLocation = document.getElementById("modalLocation");
-    const modalPrice = document.getElementById("modalPrice");
-    const modalCapacity = document.getElementById("modalCapacity");
-    const modalOrgName = document.getElementById("modalOrgName");
-    const modalDescription = document.getElementById("modalDescription");
-    const closeModalBtn = document.getElementById("closeModalBtn");
-    const signupBtn = document.getElementById("signupBtn");
-
+    // DOM
+    const myPageBtn = document.getElementById("myPageBtn");
+    const orgPageBtn = document.getElementById("orgPageBtn");
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    let organizations = [];
-    let events = [];
-    let selectedOrgIds = new Set();
-    let selectedEvent = null;
+    const filterAllBtn = document.getElementById("filterAllBtn");
+    const filterFavBtn = document.getElementById("filterFavBtn");
+    const orgChipsContainer = document.getElementById("orgChips");
+    const filterStatus = document.getElementById("filterStatus");
+
+    const monthLabelEl = document.getElementById("monthLabel");
+    const prevMonthBtn = document.getElementById("prevMonthBtn");
+    const nextMonthBtn = document.getElementById("nextMonthBtn");
+    const monthGridEl = document.getElementById("monthGrid");
+
+    const eventListEl = document.getElementById("eventList");
+    const eventsStatus = document.getElementById("eventsStatus");
+
+    const eventModal = document.getElementById("eventModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalOrg = document.getElementById("modalOrg");
+    const modalWhen = document.getElementById("modalWhen");
+    const modalLocation = document.getElementById("modalLocation");
+    const modalDescription = document.getElementById("modalDescription");
+    const modalPrice = document.getElementById("modalPrice");
+    const modalRegInfo = document.getElementById("modalRegInfo");
+    const modalSeatInfo = document.getElementById("modalSeatInfo");
+    const modalPaymentInfo = document.getElementById("modalPaymentInfo");
+    const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+    // State
     let currentUser = null;
     let currentUserProfile = null;
+    let organizations = [];
+    let orgMap = new Map(); // orgId -> data
+    let favoriteOrgIds = new Set();
 
-    let userFavorites = [];
-    let favoritesMode = false;
-    let hasAppliedFavoritesDefault = false;
+    let allEventsForMonth = [];    // alle events for aktiv måned
+    let filteredEvents = [];       // events etter filter
 
-    document.getElementById("orgPageBtn").addEventListener("click", () => {
-        window.location.href = "organization-settings.html";
-    });
+    let activeFilterType = "all";  // "all" | "favorites" | "org"
+    let activeOrgFilterId = null;
 
-    // ---------- Formatteringer ----------
-    function formatDate(date) {
-        const months = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
-        return {
-            month: months[date.getMonth()],
-            day: date.getDate()
-        };
+    // Måned-state
+    let currentMonthDate = new Date();
+    currentMonthDate.setDate(1);
+
+    function setStatus(el, msg, type = null) {
+        el.textContent = msg || "";
+        el.classList.remove("status--success", "status--error");
+        if (!msg) return;
+        if (type === "success") el.classList.add("status--success");
+        if (type === "error") el.classList.add("status--error");
     }
 
-    function formatTimeRange(start, end) {
-        const pad = (n) => String(n).padStart(2, "0");
-        const sH = pad(start.getHours());
-        const sM = pad(start.getMinutes());
-        const eH = pad(end.getHours());
-        const eM = pad(end.getMinutes());
-        return `${sH}:${sM}–${eH}:${eM}`;
-    }
-
-    function formatPrice(evt) {
-        if (!evt.isPaidEvent || (evt.priceMember === 0 && evt.priceNonMember === 0)) {
-            return '<span class="badge-free">Gratis</span>';
-        }
-        if (evt.priceMember === evt.priceNonMember) {
-            return `<span class="badge-paid">${evt.priceMember} kr</span>`;
-        }
-        return `<span class="badge-paid">Medlem ${evt.priceMember} kr / Andre ${evt.priceNonMember} kr</span>`;
-    }
-
-    // ---------- Auth ----------
+    // -------- Auth --------
     onAuthStateChanged(auth, async (user) => {
         currentUser = user;
 
         if (!user) {
-            loginBtn.textContent = "Logg inn";
-            loginBtn.style.display = "inline-flex";
+            loginBtn.style.display = "inline-block";
             logoutBtn.style.display = "none";
+            favoriteOrgIds = new Set();
             currentUserProfile = null;
-            userFavorites = [];
-            favoritesMode = false;
-            hasAppliedFavoritesDefault = false;
-            updateFavoritesButtonState();
+            await initData();
             return;
         }
 
-        loginBtn.textContent = "Min side";
-        loginBtn.style.display = "inline-flex";
-        logoutBtn.style.display = "inline-flex";
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
 
-        const userDocRef = doc(db, "users", user.uid);
-        const snap = await getDoc(userDocRef);
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
         if (snap.exists()) {
             currentUserProfile = snap.data();
+            favoriteOrgIds = new Set(currentUserProfile.favoriteOrganizations || []);
         } else {
-            currentUserProfile = {
-                displayName: user.displayName || "",
-                email: user.email,
-                role: "student",
-                adminOf: [],
-                favoriteOrganizations: []
-            };
+            currentUserProfile = null;
+            favoriteOrgIds = new Set();
         }
 
-        userFavorites = currentUserProfile.favoriteOrganizations || [];
-        updateFavoritesButtonState();
+        await initData();
     });
 
-    loginBtn.addEventListener("click", () => {
-        if (!currentUser) {
-            window.location.href = "login.html";
-            return;
-        }
-        window.location.href = "profile.html";
-    });
+    async function initData() {
+        await loadOrganizations();
+        buildOrgChips();
+        await loadEventsForCurrentMonth();
+        applyFilter("all", null);
+    }
 
-    logoutBtn.addEventListener("click", async () => {
-        try {
-            await signOut(auth);
-        } catch (err) {
-            console.error("Feil ved utlogging:", err);
-            alert("Kunne ikke logge ut.");
-        }
-    });
+    // -------- Org-data --------
+    async function loadOrganizations() {
+        const snap = await getDocs(collection(db, "organizations"));
+        organizations = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        orgMap = new Map(organizations.map(o => [o.id, o]));
+    }
 
-    // ---------- Filters ----------
-    function renderOrgFilters() {
-        orgFiltersEl.innerHTML = "";
+    function buildOrgChips() {
+        orgChipsContainer.innerHTML = "";
+        const sorted = [...organizations].sort((a, b) =>
+            (a.shortCode || a.name || "").localeCompare(b.shortCode || b.name || "", "no")
+        );
 
-        let orgsToRender = [...organizations];
-
-        if (userFavorites.length) {
-            const favSet = new Set(userFavorites);
-            orgsToRender.sort((a, b) => {
-                const aFav = favSet.has(a.id) ? 1 : 0;
-                const bFav = favSet.has(b.id) ? 1 : 0;
-                if (aFav !== bFav) return bFav - aFav;
-                const aLabel = a.shortCode || a.name || "";
-                const bLabel = b.shortCode || b.name || "";
-                return aLabel.localeCompare(bLabel, "no");
-            });
-        }
-
-        orgsToRender.forEach((org) => {
+        sorted.forEach(org => {
             const chip = document.createElement("button");
             chip.type = "button";
-            chip.className = "chip";
+            chip.className = "org-chip";
             chip.dataset.orgId = org.id;
-            if (selectedOrgIds.has(org.id)) chip.classList.add("active");
 
             const dot = document.createElement("span");
-            dot.className = "chip-dot";
+            dot.className = "org-chip-dot";
             dot.style.backgroundColor = org.color || "#9ca3af";
 
             const label = document.createElement("span");
-            label.textContent = org.shortCode || org.name;
+            label.textContent = org.shortCode || org.name || org.id;
 
             chip.appendChild(dot);
             chip.appendChild(label);
 
             chip.addEventListener("click", () => {
-                toggleOrgFilter(org.id);
+                if (activeFilterType === "org" && activeOrgFilterId === org.id) {
+                    // slå av org-filter
+                    applyFilter("all", null);
+                } else {
+                    applyFilter("org", org.id);
+                }
             });
 
-            orgFiltersEl.appendChild(chip);
+            orgChipsContainer.appendChild(chip);
         });
 
-        updateFilterNote();
+        updateFilterButtonsUI();
     }
 
-    function toggleOrgFilter(orgId) {
-        if (selectedOrgIds.has(orgId)) {
-            selectedOrgIds.delete(orgId);
-        } else {
-            selectedOrgIds.add(orgId);
-        }
-        renderOrgFilters();
-        renderEvents();
+    // -------- Måned-beregninger --------
+    function getMonthBounds(d) {
+        const year = d.getFullYear();
+        const month = d.getMonth();
+        const first = new Date(year, month, 1);
+        const nextMonthFirst = new Date(year, month + 1, 1);
+        return { first, nextMonthFirst };
     }
 
-    function clearFilters() {
-        selectedOrgIds.clear();
-        favoritesMode = false;
-        renderOrgFilters();
-        renderEvents();
-        updateFavoritesButtonState();
+    function formatMonthLabel(d) {
+        const months = [
+            "januar", "februar", "mars", "april", "mai", "juni",
+            "juli", "august", "september", "oktober", "november", "desember"
+        ];
+        return `${months[d.getMonth()]} ${d.getFullYear()}`;
     }
 
-    function updateFilterNote() {
-        if (selectedOrgIds.size === 0) {
-            if (favoritesMode && userFavorites.length) {
-                filterNoteEl.textContent = "Favorittforeninger er valgt, men ingen filter aktivt – viser alle.";
-            } else {
-                filterNoteEl.textContent = "Ingen filter aktivt – viser alle foreninger.";
-            }
-        } else {
-            const active = organizations
-                .filter((o) => selectedOrgIds.has(o.id))
-                .map((o) => o.shortCode || o.name)
-                .join(", ");
-            filterNoteEl.textContent = "Filtrerer på: " + active;
-        }
-    }
+    async function loadEventsForCurrentMonth() {
+        setStatus(eventsStatus, "Laster events ...");
+        const { first, nextMonthFirst } = getMonthBounds(currentMonthDate);
 
-    clearFiltersBtn.addEventListener("click", clearFilters);
-
-    // ---------- Favoritter-knapp ----------
-    function updateFavoritesButtonState() {
-        if (!favoritesBtn) return;
-
-        if (!userFavorites.length) {
-            favoritesBtn.classList.add("disabled");
-            favoritesBtn.classList.remove("active");
-            favoritesBtn.textContent = "♡";
-            return;
-        }
-
-        favoritesBtn.classList.remove("disabled");
-
-        if (favoritesMode) {
-            favoritesBtn.classList.add("active");
-            favoritesBtn.textContent = "❤";
-        } else {
-            favoritesBtn.classList.remove("active");
-            favoritesBtn.textContent = "♡";
-        }
-    }
-
-
-    favoritesBtn.addEventListener("click", () => {
-        if (!userFavorites.length) {
-            alert("Velg favorittforeninger på Min side først.");
-            return;
-        }
-
-        favoritesMode = true;
-        hasAppliedFavoritesDefault = true;
-        selectedOrgIds = new Set(
-            userFavorites.filter((id) => organizations.some((o) => o.id === id))
-        );
-        renderOrgFilters();
-        renderEvents();
-        updateFavoritesButtonState();
-    });
-
-    // ---------- Event-rendering ----------
-    function renderEvents() {
-        eventListEl.innerHTML = "";
-        const filtered = events
-            .filter((evt) => {
-                if (selectedOrgIds.size === 0) return true;
-                return selectedOrgIds.has(evt.organizationId);
-            })
-            .sort((a, b) => a.startDateTime - b.startDateTime);
-
-        eventsCountEl.textContent = `${filtered.length} arrangementer`;
-
-        if (filtered.length === 0) {
-            noEventsEl.style.display = "block";
-            return;
-        } else {
-            noEventsEl.style.display = "none";
-        }
-
-        filtered.forEach((evt) => {
-            const org = organizations.find((o) => o.id === evt.organizationId);
-            const card = document.createElement("article");
-            card.className = "event-card";
-
-            const dateInfo = formatDate(evt.startDateTime);
-
-            const dateEl = document.createElement("div");
-            dateEl.className = "event-date";
-            dateEl.innerHTML = `
-          <div class="event-date-month">${dateInfo.month}</div>
-          <div class="event-date-day">${dateInfo.day}</div>
-        `;
-
-            const contentEl = document.createElement("div");
-            contentEl.className = "event-content";
-
-            const titleRow = document.createElement("div");
-            titleRow.className = "event-title-row";
-
-            const titleEl = document.createElement("h3");
-            titleEl.className = "event-title";
-            titleEl.textContent = evt.title;
-
-            const orgPill = document.createElement("span");
-            orgPill.className = "event-org-pill";
-
-            const orgDot = document.createElement("span");
-            orgDot.className = "event-org-dot";
-            orgDot.style.backgroundColor = org?.color || "#4f46e5";
-
-            const orgCode = document.createElement("span");
-            orgCode.textContent = org?.shortCode || org?.name || "ORG";
-
-            orgPill.appendChild(orgDot);
-            orgPill.appendChild(orgCode);
-
-            titleRow.appendChild(titleEl);
-            titleRow.appendChild(orgPill);
-
-            const metaEl = document.createElement("div");
-            metaEl.className = "event-meta";
-            metaEl.innerHTML = `
-          <span>${formatTimeRange(evt.startDateTime, evt.endDateTime)}</span>
-          <span class="dot"></span>
-          <span>${evt.location || "Sted kommer"}</span>
-          <span class="dot"></span>
-          <span>${evt.maxParticipants - evt.registeredCount} ledige plasser</span>
-        `;
-
-            const priceEl = document.createElement("div");
-            priceEl.className = "event-capacity";
-            priceEl.innerHTML = formatPrice(evt);
-
-            contentEl.appendChild(titleRow);
-            contentEl.appendChild(metaEl);
-            contentEl.appendChild(priceEl);
-
-            card.appendChild(dateEl);
-            card.appendChild(contentEl);
-
-            card.addEventListener("click", () => openEventModal(evt));
-
-            eventListEl.appendChild(card);
-        });
-    }
-
-    // ---------- Modal ----------
-    function openEventModal(evt) {
-        selectedEvent = evt;
-        const org = organizations.find((o) => o.id === evt.organizationId);
-
-        modalTitle.textContent = evt.title;
-        modalOrgCode.textContent = org?.shortCode || org?.name || "ORG";
-        const dot = modalOrgPill.querySelector(".event-org-dot");
-        if (dot && org?.color) {
-            dot.style.backgroundColor = org.color;
-        }
-
-        modalOrgName.textContent = org?.name || "";
-        modalTime.textContent = formatTimeRange(evt.startDateTime, evt.endDateTime);
-        modalLocation.textContent = evt.location || "Sted kommer";
-
-        const capacityLeft = evt.maxParticipants - evt.registeredCount;
-        modalCapacity.textContent = `${evt.registeredCount}/${evt.maxParticipants} ( ${capacityLeft} ledig )`;
-
-        modalPrice.innerHTML = formatPrice(evt);
-        modalDescription.textContent = evt.description || "";
-
-        eventModalBackdrop.classList.add("open");
-    }
-
-    function closeEventModal() {
-        selectedEvent = null;
-        eventModalBackdrop.classList.remove("open");
-    }
-
-    signupBtn.addEventListener("click", () => {
-        if (!selectedEvent) return;
-        alert("Her kobler du på Firestore-registrering og Vipps/kort senere 🤓");
-    });
-
-    closeModalBtn.addEventListener("click", closeEventModal);
-    eventModalBackdrop.addEventListener("click", (e) => {
-        if (e.target === eventModalBackdrop) {
-            closeEventModal();
-        }
-    });
-
-    // ---------- Hent data fra Firestore ----------
-    async function loadOrganizations() {
-        const snap = await getDocs(collection(db, "organizations"));
-        organizations = snap.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-        renderOrgFilters();
-    }
-
-    async function loadEvents() {
-        const now = new Date();
+        // Firestore-query på startDateTime for aktuell måned
         const eventsRef = collection(db, "events");
         const qEvents = query(
             eventsRef,
-            where("startDateTime", ">=", Timestamp.fromDate(now)),
+            where("startDateTime", ">=", first),
+            where("startDateTime", "<", nextMonthFirst),
             orderBy("startDateTime", "asc")
         );
 
         const snap = await getDocs(qEvents);
-        events = snap.docs.map((doc) => {
-            const data = doc.data();
+        allEventsForMonth = snap.docs.map(d => {
+            const data = d.data();
             return {
-                id: doc.id,
+                id: d.id,
                 ...data,
-                startDateTime: data.startDateTime.toDate(),
-                endDateTime: data.endDateTime.toDate(),
-                registeredCount: data.registeredCount || 0
+                start: data.startDateTime?.toDate?.() ?? null,
+                end: data.endDateTime?.toDate?.() ?? null
             };
         });
 
-        renderEvents();
+        setStatus(eventsStatus, "");
+        monthLabelEl.textContent = formatMonthLabel(currentMonthDate);
     }
 
-    // Init
-    (async function init() {
-        try {
-            await loadOrganizations();
-            await loadEvents();
-        } catch (err) {
-            console.error("Feil ved lasting av data:", err);
-            noEventsEl.style.display = "block";
-            noEventsEl.textContent = "Kunne ikke laste arrangementer.";
+    // -------- Filtrering --------
+    function applyFilter(type, orgId) {
+        activeFilterType = type;
+        activeOrgFilterId = orgId || null;
+
+        if (type === "all") {
+            filteredEvents = [...allEventsForMonth];
+            setStatus(filterStatus, "");
+        } else if (type === "favorites") {
+            if (!favoriteOrgIds.size) {
+                filteredEvents = [];
+                setStatus(filterStatus, "Ingen favorittforeninger valgt enda.", "error");
+            } else {
+                filteredEvents = allEventsForMonth.filter(evt =>
+                    favoriteOrgIds.has(evt.organizationId)
+                );
+                setStatus(filterStatus, "");
+            }
+        } else if (type === "org" && orgId) {
+            filteredEvents = allEventsForMonth.filter(evt => evt.organizationId === orgId);
+            const org = orgMap.get(orgId);
+            setStatus(
+                filterStatus,
+                `Viser kun events fra ${org?.shortCode || org?.name || "forening"}.`
+            );
+        } else {
+            filteredEvents = [...allEventsForMonth];
+            setStatus(filterStatus, "");
         }
-    })();
+
+        updateFilterButtonsUI();
+        renderMonthGrid();
+        renderEventList();
+    }
+
+    function updateFilterButtonsUI() {
+        // hovedfilterknapper
+        filterAllBtn.classList.toggle("active", activeFilterType === "all");
+        filterFavBtn.classList.toggle("active", activeFilterType === "favorites");
+
+        // org-chips
+        orgChipsContainer.querySelectorAll(".org-chip").forEach(chip => {
+            const id = chip.dataset.orgId;
+            chip.classList.toggle("active", activeFilterType === "org" && activeOrgFilterId === id);
+        });
+    }
+
+    // -------- Rendering: månedsgrid --------
+    function renderMonthGrid() {
+        monthGridEl.innerHTML = "";
+
+        // Uke-dager header
+        const weekdays = ["Ma", "Ti", "On", "To", "Fr", "Lø", "Sø"];
+        weekdays.forEach(d => {
+            const h = document.createElement("div");
+            h.className = "month-grid-header";
+            h.textContent = d;
+            monthGridEl.appendChild(h);
+        });
+
+        const year = currentMonthDate.getFullYear();
+        const month = currentMonthDate.getMonth();
+        const firstDayOfMonth = new Date(year, month, 1);
+        const firstWeekday = (firstDayOfMonth.getDay() || 7); // 1=Ma,...7=Sø
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const prevMonthDays = firstWeekday - 1; // antall ruter før 1.
+
+        const totalCells = Math.ceil((prevMonthDays + daysInMonth) / 7) * 7;
+
+        for (let cellIndex = 0; cellIndex < totalCells; cellIndex++) {
+            const cell = document.createElement("div");
+            cell.className = "day-cell";
+
+            const dayOffset = cellIndex - prevMonthDays + 1;
+            const cellDate = new Date(year, month, dayOffset);
+
+            const isCurrentMonth = cellDate.getMonth() === month;
+            if (!isCurrentMonth) {
+                cell.classList.add("outside");
+            }
+
+            const dayNumberEl = document.createElement("div");
+            dayNumberEl.className = "day-number";
+            dayNumberEl.textContent = cellDate.getDate();
+            cell.appendChild(dayNumberEl);
+
+            const eventsForDay = filteredEvents.filter(evt => {
+                if (!evt.start) return false;
+                return evt.start.getFullYear() === cellDate.getFullYear() &&
+                    evt.start.getMonth() === cellDate.getMonth() &&
+                    evt.start.getDate() === cellDate.getDate();
+            });
+
+            eventsForDay.slice(0, 3).forEach(evt => {
+                const org = orgMap.get(evt.organizationId);
+                const pill = document.createElement("div");
+                pill.className = "event-pill";
+                pill.style.background = (org?.color || "#e5e7eb");
+
+                const title = document.createElement("span");
+                title.className = "event-pill-title";
+                title.textContent = evt.title || "(uten tittel)";
+
+                const orgSpan = document.createElement("span");
+                orgSpan.className = "event-pill-org";
+                orgSpan.textContent = org?.shortCode || org?.name || "";
+
+                pill.appendChild(title);
+                if (orgSpan.textContent) {
+                    pill.appendChild(document.createTextNode(" · "));
+                    pill.appendChild(orgSpan);
+                }
+
+                pill.addEventListener("click", () => openEventModal(evt));
+
+                cell.appendChild(pill);
+            });
+
+            if (eventsForDay.length > 3) {
+                const more = document.createElement("div");
+                more.style.fontSize = "0.7rem";
+                more.style.color = "#6b7280";
+                more.textContent = `+${eventsForDay.length - 3} til`;
+                cell.appendChild(more);
+            }
+
+            monthGridEl.appendChild(cell);
+        }
+    }
+
+    // -------- Rendering: listevisning --------
+    function renderEventList() {
+        eventListEl.innerHTML = "";
+
+        if (!filteredEvents.length) {
+            eventListEl.innerHTML =
+                '<div class="event-list-item">Ingen events i denne måneden for valgt filter.</div>';
+            return;
+        }
+
+        filteredEvents.forEach(evt => {
+            const item = document.createElement("div");
+            item.className = "event-list-item";
+
+            item.addEventListener("click", () => openEventModal(evt));
+
+            const title = document.createElement("div");
+            title.className = "event-list-title";
+            title.textContent = evt.title || "(uten tittel)";
+
+            const meta = document.createElement("div");
+            meta.className = "event-list-meta";
+            meta.textContent = formatEventDateTime(evt);
+
+            const orgTag = document.createElement("span");
+            orgTag.className = "event-list-org-tag";
+            const org = orgMap.get(evt.organizationId);
+            const dot = document.createElement("span");
+            dot.className = "event-list-org-dot";
+            dot.style.backgroundColor = org?.color || "#2563eb";
+
+            const label = document.createElement("span");
+            label.textContent = org?.shortCode || org?.name || evt.organizationId || "Forening";
+
+            orgTag.appendChild(dot);
+            orgTag.appendChild(label);
+
+            item.appendChild(title);
+            item.appendChild(meta);
+            item.appendChild(orgTag);
+
+            eventListEl.appendChild(item);
+        });
+    }
+
+    function formatEventDateTime(evt) {
+        if (!evt.start || !evt.end) return "Tid ikke satt";
+
+        const d = evt.start;
+        const pad = (n) => String(n).padStart(2, "0");
+        const day = pad(d.getDate());
+        const month = pad(d.getMonth() + 1);
+        const year = d.getFullYear();
+
+        const sH = pad(d.getHours());
+        const sM = pad(d.getMinutes());
+        const eH = pad(evt.end.getHours());
+        const eM = pad(evt.end.getMinutes());
+
+        return `${day}.${month}.${year} kl. ${sH}:${sM}–${eH}:${eM}`;
+    }
+
+    // -------- Modal (samme for liste + grid) --------
+    function openEventModal(evt) {
+        const org = orgMap.get(evt.organizationId);
+
+        modalTitle.textContent = evt.title || "(uten tittel)";
+        modalOrg.innerHTML = `<span class="label">Forening:</span> ${
+            org?.shortCode ? `${org.shortCode} – ${org.name}` : (org?.name || "Ukjent forening")
+        }`;
+
+        modalWhen.innerHTML = `<span class="label">Når:</span> ${formatEventDateTime(evt)}`;
+
+        if (evt.location) {
+            modalLocation.innerHTML = `<span class="label">Sted:</span> ${evt.location}`;
+        } else {
+            modalLocation.textContent = "";
+        }
+
+        if (evt.description) {
+            modalDescription.innerHTML = `<span class="label">Beskrivelse:</span> ${evt.description}`;
+        } else {
+            modalDescription.textContent = "";
+        }
+
+        const priceMember = evt.priceMember ?? 0;
+        const priceNonMember = evt.priceNonMember ?? 0;
+        if (priceMember > 0 || priceNonMember > 0) {
+            modalPrice.innerHTML = `<span class="label">Pris:</span> Medlem ${priceMember} kr, ikke-medlem ${priceNonMember} kr.`;
+            modalPaymentInfo.textContent = "Betaling via Vipps/kort (kommer snart)";
+        } else {
+            modalPrice.innerHTML = `<span class="label">Pris:</span> Gratis`;
+            modalPaymentInfo.textContent = "Ingen betaling";
+        }
+
+        if (evt.maxParticipants && evt.maxParticipants > 0) {
+            modalSeatInfo.textContent = `Maks ${evt.maxParticipants} plasser`;
+        } else {
+            modalSeatInfo.textContent = `Ubegrenset antall plasser`;
+        }
+
+        if (evt.registrationOpensAt && evt.registrationOpensAt.toDate) {
+            const d = evt.registrationOpensAt.toDate();
+            const pad = (n) => String(n).padStart(2, "0");
+            const dateStr = `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
+            const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            modalRegInfo.innerHTML = `<span class="label">Påmelding åpner:</span> ${dateStr} kl. ${timeStr}`;
+        } else {
+            modalRegInfo.innerHTML = `<span class="label">Påmelding:</span> Åpen`;
+        }
+
+        eventModal.classList.add("active");
+    }
+
+    function closeEventModal() {
+        eventModal.classList.remove("active");
+    }
+
+    modalCloseBtn.addEventListener("click", closeEventModal);
+    eventModal.addEventListener("click", (e) => {
+        if (e.target === eventModal) closeEventModal();
+    });
+
+    // -------- Navigasjon måned --------
+    prevMonthBtn.addEventListener("click", async () => {
+        currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+        currentMonthDate.setDate(1);
+        await loadEventsForCurrentMonth();
+        applyFilter(activeFilterType, activeOrgFilterId);
+    });
+
+    nextMonthBtn.addEventListener("click", async () => {
+        currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+        currentMonthDate.setDate(1);
+        await loadEventsForCurrentMonth();
+        applyFilter(activeFilterType, activeOrgFilterId);
+    });
+
+    // -------- Filter-knapp events --------
+    filterAllBtn.addEventListener("click", () => {
+        applyFilter("all", null);
+    });
+
+    filterFavBtn.addEventListener("click", () => {
+        applyFilter("favorites", null);
+    });
+
+    // -------- Header-knapper --------
+    myPageBtn.addEventListener("click", () => {
+        window.location.href = "my-page.html"; // tilpass filnavn
+    });
+
+    orgPageBtn.addEventListener("click", () => {
+        window.location.href = "organization-settings.html";
+    });
+
+    loginBtn.addEventListener("click", () => {
+        // midlertidig – bytt til din egen login-side
+        window.location.href = "login.html";
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+        try {
+            await signOut(auth);
+            window.location.reload();
+        } catch (err) {
+            console.error(err);
+            alert("Kunne ikke logge ut.");
+        }
+    });
 </script>
 </body>
 </html>
