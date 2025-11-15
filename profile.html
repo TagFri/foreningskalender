@@ -304,15 +304,16 @@
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
-            window.location.href = "index.html";
+            window.location.href = "login.html";
             return;
         }
 
         currentUser = user;
-        userDocRef = doc(db, "users", user.uid);
 
-        const snap = await getDoc(userDocRef);
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
         if (!snap.exists()) {
+            // enkel fallback
             currentUserProfile = {
                 displayName: user.displayName || "",
                 email: user.email,
@@ -324,12 +325,11 @@
             currentUserProfile = snap.data();
         }
 
-        favoriteOrgIds = new Set(currentUserProfile.favoriteOrganizations || []);
-
+        // Viktig: last foreninger FØR vi renderer brukertype
         await loadOrganizations();
         renderUserInfo();
         renderFavoritesList();
-        setupSubscriptionUrl();
+        setupIcsUrl();
     });
 
     async function loadOrganizations() {
@@ -341,14 +341,13 @@
         userNameEl.textContent = currentUserProfile.displayName || "(Uten navn)";
         userEmailEl.textContent = currentUserProfile.email || "";
 
-        const role = currentUserProfile.role || "student";
-        let roleText = "Student";
+        // 1) Start alltid med "Student"
+        const lines = ["Student"];
 
-        if (role === "superAdmin") {
-            roleText = "Superadministrator";
-        } else if (role === "orgAdmin") {
-            const raw = currentUserProfile.adminOf;
+        // 2) Finn hvilke foreninger brukeren er admin for
+        if (currentUserProfile.role === "orgAdmin" || currentUserProfile.role === "superAdmin") {
             let adminOrgIds = [];
+            const raw = currentUserProfile.adminOf;
 
             if (Array.isArray(raw)) {
                 adminOrgIds = raw.map(String);
@@ -358,29 +357,31 @@
                 adminOrgIds = Object.keys(raw);
             }
 
-            const orgMap = new Map(organizations.map((o) => [o.id, o]));
-            const labels = adminOrgIds.map((id) => {
-                const o = orgMap.get(id);
-                if (!o) return id;
-                return o.shortCode ? `${o.shortCode} – ${o.name}` : o.name || id;
+            // Unike IDer + lag "Admin for <shortCode>"
+            const seen = new Set();
+            adminOrgIds.forEach((id) => {
+                if (seen.has(id)) return;
+                seen.add(id);
+
+                const org = organizations.find((o) => o.id === id);
+                const shortCode = org?.shortCode || id;
+                lines.push(`Admin for ${shortCode}`);
             });
 
-            if (labels.length) {
-                roleText = `Foreningsadministrator for ${labels.join(", ")}`;
+            // Vis admin-handlinger hvis de faktisk er admin for noe
+            if (lines.length > 1) {
+                adminActionsEl.style.display = "flex";
             } else {
-                roleText = "Foreningsadministrator";
+                adminActionsEl.style.display = "none";
             }
-        } else {
-            roleText = "Student";
-        }
-
-        userRoleEl.textContent = `Brukertype: ${roleText}`;
-
-        if (role === "orgAdmin" || role === "superAdmin") {
-            adminActionsEl.style.display = "flex";
         } else {
             adminActionsEl.style.display = "none";
         }
+
+        // 3) Sett teksten med line breaks
+        // Første linje-overskrift "Brukertype:"
+        const htmlLines = ["Brukertype:", ...lines];
+        userRoleEl.innerHTML = htmlLines.join("<br>");
     }
 
     function renderFavoritesList() {
